@@ -50,7 +50,7 @@ With [jQuery](http://jquery.org)
     })
 
 [Prototype](http://prototypejs.org)
-    Event.observe('window', 'onload', function() {
+    Event.observe('dom:loaded', function() {
       var player = jsPlayer("http://localhost/my_file.mp3", {elementID:"myPlayer"})
     })
 
@@ -70,13 +70,16 @@ OPTIONS OBJECT
 ===
 
 elementID: Default: "jsPlayer".
+
 Set this to the element ID that you wish to wrap around.
 
 useFlash: Default: undefined.
+
 Set to something truthy to use only the  Flash playback engine.  If combined 
 with useNative, will have no effect.
 
 useNative: Default: undefined.
+
 Set to something truthy to use only the native browser playback engine.  If 
 combined with useFlash, will have no effect.
 
@@ -84,6 +87,7 @@ combined with useFlash, will have no effect.
 UPCOMING
 ===
 Video support
+
 Media playlists
 
 #### Thanks to the [SoundCloud API player](https://github.com/soundcloud/soundcloud-custom-player) for insipiration
