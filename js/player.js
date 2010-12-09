@@ -12,6 +12,24 @@ var jsPlayerUtils = {
     ex.value = type;
     ex.message = m;
     throw (ex);
+  },
+  addClass: function(e, klass) {
+    e.className = e.className + " " + klass;
+  },
+  removeClass: function(e, klass) {
+    var retval, classString;
+    if (e.className === "" || e.className === " ") {
+      return;
+    }
+    classes = e.className.split(" ");
+    console.log(classes);
+    classString = classes.filter(function(member, i, a) {
+      if (!(member === klass)){
+       return member;
+      }
+    }).join(" ");
+    console.log(classString);
+    e.className = classString;
   }
 };
 
@@ -61,7 +79,6 @@ var jsPlayer = function (sourceURL, params) {
     var audioTypes = { mp3: "audio/mpeg", mpeg: "audio/mpeg", mpeg3: "audio/mpeg",
                          ogg: "audio/ogg" },
         retval, match;
-    console.log(outObject.source.split(".").last());
     match = outObject.source.split(".").last();
     if (match && audioTypes[match]) {
       retval = audioTypes[match];
@@ -100,29 +117,29 @@ var jsPlayer = function (sourceURL, params) {
         e = document.createElement("div");
     e.setAttribute("class", "startStop");
     node.appendChild(e);
-    console.log("adding controls");
     outObject.controls.startStop = e;
   }());
 
   helpers.playPause = function () {
-    console.log(outObject.engine.isPlaying());
     if (outObject.engine.isPlaying()) {
       outObject.engine.play();
-      outObject.controls.startStop.className = outObject.controls.startStop.className.replace(/\splayerStopped\s/, '');
-      outObject.controls.startStop.className = outObject.controls.startStop.className + " playerStarted ";
+      jsPlayerUtils.removeClass(outObject.controls.startStop, "playerStopped");
+      jsPlayerUtils.addClass(outObject.controls.startStop, "playerStarted");
     } else {
       outObject.engine.pause();
-      outObject.controls.startStop.className = outObject.controls.startStop.className.replace(/\splayerStarted\s/, '');
-      outObject.controls.startStop.className = outObject.controls.startStop.className  + " playerStopped ";
+      jsPlayerUtils.removeClass(outObject.controls.startStop, "playerStarted");
+      jsPlayerUtils.addClass(outObject.controls.startStop, "playerStopped");
     }
   };
 
   //event binding should be absolute last thing
-  outObject.controls.startStop.addEventListener("click", 
-    function () { 
-      helpers.playPause(); 
-    },
-    false);
-  //Hello IE.  We meet again.
+  if (document.getElementsByTagName("body")[0].addEventListener) {
+    outObject.controls.startStop.addEventListener("click",
+      function () {
+        helpers.playPause();
+      }, false);
+  } else {
+    //Hello IE.  We meet again.
+  }
   return outObject;
 };

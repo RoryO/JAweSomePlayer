@@ -86,6 +86,7 @@ combined with useFlash, will have no effect.
 QUESTIONS
 ===
 Q: Why not use jQuery or something similar?
+
 A: jQuery is immensely popular for sure, but not everybody uses it.
 Some like Prototype for it's class structure, YUI for the ease of
 developing small applets, Dojo for constructing an interface
@@ -96,6 +97,7 @@ browser as of late, I wanted to learn how to wrangle Javascript correctly
 where a browser library is not available.
 
 Q: How do I make unique players?
+
 A: jAweSomePlayer is centered around a DOM id, and each instance only
 manipulates the children of that id.  This naturally provides a unique
 namespace for CSS.  For example
