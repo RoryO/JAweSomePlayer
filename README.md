@@ -15,13 +15,13 @@ libraries taking the pain out of messing with each browser's DOM.
 JAweSomePlayer is licensed under the BSD 3-clause license.
 
 Source at [Github]("http://github.com/RoryO/jawesomeplayer"), with a pretty
-[homepage]("http://metricgnome.net/awesome/jawesomeplayer") with latest
+[homepage]("http://metricgnome.net/awesome/jawesomeplayer") containing latest
 version and documentation.
 
 HOW TO USE IT QUICKLY
 ===
 Copy the example CSS, images and javascripts from the respective
-directories to your environment.  The CSS provided expectes images to
+directories to your environment.  The CSS provided expects images to
 reside in ../images relative to the CSS file.
 
 Create an empty DIV in your document where you want the player and, optionally,
@@ -61,7 +61,7 @@ element and place it as the first child of the div ID.  If
 the browser cannot play it natively, it will automatically fall back to
 an embedded 1x1 Flash player as the first children of the div
 ID.  If the automatic detection proves buggy or unreliable, the options
-paramaters useFlash or useNative will force using the Flash or native
+parameters useFlash or useNative will force using the Flash or native
 media elements respectively.  The player will also build a set of controls 
 as divs underneath as playback controls.
 
@@ -83,6 +83,50 @@ useNative: Default: undefined.
 Set to something truthy to use only the native browser playback engine.  If 
 combined with useFlash, will have no effect.
 
+QUESTIONS
+===
+Q: Why not use jQuery or something similar?
+A: jQuery is immensely popular for sure, but not everybody uses it.
+Some like Prototype for it's class structure, YUI for the ease of
+developing small applets, Dojo for constructing an interface
+rapidly, Objective-J for a full stack app framework, and so forth.  
+It's not my place to hoist these choices on someone. Furthermore, 
+with Javascript being put into a great deal of applications outside the 
+browser as of late, I wanted to learn how to wrangle Javascript correctly 
+where a browser library is not available.
+
+Q: How do I make unique players?
+A: jAweSomePlayer is centered around a DOM id, and each instance only
+manipulates the children of that id.  This naturally provides a unique
+namespace for CSS.  For example
+
+    .playerStarted {
+      background-image: url("/images/player_started.png");
+    }
+
+    .playerStopped {
+      background-image: url("/images/player_stopped.png");
+    }
+
+    #largePlayer {
+      font-size: 150%;
+      font-weight: 500;
+    }
+
+    #largePlayer .playerStarted {
+      background-image: url("/images/player_started_large");
+    }
+
+    #largePlayer .playerStopped {
+      background-image: url("/images/player_stopped_large.png")
+    }
+
+The same technique can also be used for providing a class of players,
+such as one for video and one for audio and styled appropriately in the
+CSS file.
+
+    <div id="videoStream" class="vidPlayer"></div>
+    <div id="radioPlayer" class="audioPlayer"></div>
 
 UPCOMING
 ===
@@ -90,5 +134,6 @@ Video support
 
 Media playlists
 
-#### Thanks to the [SoundCloud API player](https://github.com/soundcloud/soundcloud-custom-player) for insipiration
+#### Thanks to the [SoundCloud API player](https://github.com/soundcloud/soundcloud-custom-player) for inspiration.
+
 (c) Rory O'Connell
