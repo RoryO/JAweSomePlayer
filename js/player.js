@@ -132,6 +132,11 @@ var jsPlayer = function (sourceURL, params) {
     }
   };
 
+  if(params.autoStart) {
+    helpers.playPause();
+  } else {
+    jsPlayerUtils.addClass(outObject.controls.startStop, "playerStopped");
+  }
   //event binding should be absolute last thing
   if (document.getElementsByTagName("body")[0].addEventListener) {
     outObject.controls.startStop.addEventListener("click",
