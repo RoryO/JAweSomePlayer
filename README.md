@@ -83,6 +83,12 @@ useNative: Default: undefined.
 Set to something truthy to use only the native browser playback engine.  If 
 combined with useFlash, will have no effect.
 
+useNativeControls: Default: undefined.
+
+Set to something truthy to use the native OS playback controls of the
+media element instead of constructing an HTML interface.  Does not work
+with Flash.
+
 QUESTIONS
 ===
 Q: Why not use jQuery or something similar?
