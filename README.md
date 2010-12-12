@@ -89,6 +89,11 @@ Set to something truthy to use the native OS playback controls of the
 media element instead of constructing an HTML interface.  Does not work
 with Flash.
 
+controls: 
+
+Default: {startStop: true, scrubber: true, volume: true}
+
+Set any of the elements to something falsy
 QUESTIONS
 ===
 Q: Why not use jQuery or something similar?

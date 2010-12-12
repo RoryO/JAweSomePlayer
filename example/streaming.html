@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../js/player.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://code.jquery.com/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../js/slider.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+      $(document).ready(function() {
+        var pl = jsPlayer("http://krui.student-services.uiowa.edu:8103/listen", {elementID: "studioPlayer"});
+      });
+    </script>
+    <style type="text/css" media="screen">
+      .startStop {
+        width: 100px;
+        height: 100px;
+      }
+      .playerStopped {
+        background-color: red;
+      }
+      .playerStarted {
+        background-color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="studioPlayer">
+    </div>
+  </body>
+</html>
