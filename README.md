@@ -69,7 +69,7 @@ as divs underneath as playback controls.
 OPTIONS OBJECT
 ===
 
-elementID: Default: "jsPlayer".
+elementId: Default: "jsPlayer".
 
 Set this to the element ID that you wish to wrap around.
 

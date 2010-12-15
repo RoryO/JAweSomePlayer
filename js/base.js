@@ -11,7 +11,7 @@ var jsPlayerUtils = {
 
 var jsPlayerEngine = function (engineElement, params) {
 
-  var outObject = {};
+  var outObject = {},
   params = params || {};
 
   if (!engineElement) {
@@ -41,22 +41,25 @@ var jsPlayerEngine = function (engineElement, params) {
 
 var jsPlayer = function (sourceURL, params) {
   var outObject = {},
-      helpers = {};
+      helpers = {},
+      defaultParams = {
+        elementId: "jsPlayer",
+        controls: {startStop: true, scrubber: true, volume: true}
+      };
 
   if (!sourceURL) {
     jsPlayerUtils.exception("ArgumentError", "URL of audio not provided");
   }
 
-  params = params || { controls: {startStop: true, scrubber: true, volume: true}};
+  params = Object.merge(params, defaultParams);
   outObject.source = sourceURL;
-  outObject.elementID = params.elementID || "jsPlayer";
+  outObject.elementId = params.elementId;
 
   outObject.controls = {
     toggleStartClass: function() {
       if (!params.controls && params.controls.startStop) {
         return;
       }
-      
     }
   };
 
@@ -78,11 +81,11 @@ var jsPlayer = function (sourceURL, params) {
 
   // detect audio engine
   (function () {
-    var node = document.getElementById(outObject.elementID),
+    var node = document.getElementById(outObject.elementId),
         el = document.createElement("audio");
     if (!node) {
       jsPlayerUtils.exception("RuntimeError", 
-        "Unable to find player element " + outObject.elementID);
+        "Unable to find player element " + outObject.elementId);
     }
     if (!el.canPlayType || !el.canPlayType(outObject.mimeType)) {
       // build flash elements
@@ -97,7 +100,7 @@ var jsPlayer = function (sourceURL, params) {
 
   // construct player controls
   (function () {
-    var node = document.getElementById(outObject.elementID),
+    var node = document.getElementById(outObject.elementId),
         startStopElement,
         volumeElement, 
         scrubElement;
@@ -120,7 +123,7 @@ var jsPlayer = function (sourceURL, params) {
         scrubElement = document.createElement("div");
         scrubElement.setAttribute("class", "scrubber");
         node.appendChild(scrubElement);
-        outObject.controls.scrubber = seekElement;
+        outObject.controls.scrubber = scrubElement;
       }
     }
   }());
@@ -140,7 +143,7 @@ var jsPlayer = function (sourceURL, params) {
   if(params.autoStart) {
     helpers.playPause();
   } else {
-   // outObject.controls.startStop.addClass("playerStopped");
+   outObject.controls.startStop.addClass("playerStopped");
   }
 
   //event binding should be absolute last thing

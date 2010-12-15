@@ -43,6 +43,8 @@ if (!Array.prototype.indexOf) {
     return -1;
   };
 }
+/*global window: false */
+
 if (!Array.prototype.last) {
   Array.prototype.last = function () { 
     return this[this.length - 1]; 
@@ -55,56 +57,69 @@ if (!Array.prototype.cycle) {
     retval = this.shift();
     this.push(retval);
     return retval;
-  }
+  };
 }
 
-if (!window.Element.prototype.classArray){
-  window.Element.prototype.classArray = function () {
-    return this.className.split(" ");
-  }
+if(!domExt) {
+  var domExt = {};
 }
 
-if (!window.Element.prototype.hasClass) {
-  window.Element.prototype.hasClass = function (klass) {
-    if (this.classArray().indexOf(klass) === -1) {
+if (!domExt.classArray) {
+  domExt.classArray = function (el) {
+    return el.className.split(" ");
+  };
+}
+
+if (!domExt.hasClass) {
+  domExt.hasClass = function (el, klass) {
+    if (el.classArray().indexOf(klass) === -1) {
       return false;
     } else {
       return true;
     }
-  }
+  };
 }
 
-if (!window.Element.prototype.addClass) {
-  window.Element.prototype.addClass = function (klass) {
-    if (this.hasClass(klass)) {
+if (!domExt.addClass) {
+  domExt.addClass = function (el, klass) {
+    if (el.hasClass(klass)) {
       return;
     }
-
-    this.className = this.className + " " + klass;
-  }
+    el.className = el.className + " " + klass;
+  };
 }
 
-if (!window.Element.prototype.removeClass) {
-  window.Element.prototype.removeClass = function (klass) {
-    if (!this.hasClass(klass)) {
+if (!domExt.removeClass) {
+  domExt.removeClass = function (el, klass) {
+    if (!domExt.hasClass(el, klass)) {
       return;
     }
     var classList;
-    classList = this.classArray().filter(function (member, i, a) {
-      if (!(member === klass)) {
+    classList = domExt.classArray(el).filter(function (member, i, a) {
+      if (member !== klass) {
         return member;
       }
     });
-    this.className = classList.join(" ");
-  }
+    el.className = classList.join(" ");
+  };
 }
 
 if (!Object.merge) {
-  Object.merge = function (objA, objB, deepCopy) {
-    var ele, retval;
-    for (ele in objA) {
-
+  Object.merge = function () {
+    "use strict";
+    console.log("in merge");
+    var retval = arguments[0];
+    for (var i = 1; i <= arguments.length; i++) {
+      if (arguments[i] !== undefined) {
+        for(var ele in arguments[i]) {
+          if(!retval[ele]) {
+            retval[ele] = arguments[i][ele];
+          }
+        }
+      }
     }
+    console.log("returning from merge " + retval);
+    return retval;
   }
 }
 var jsPlayerUtils = {
