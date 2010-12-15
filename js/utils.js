@@ -62,7 +62,6 @@ if (!domExt.removeClass) {
 if (!Object.merge) {
   Object.merge = function () {
     "use strict";
-    console.log("in merge");
     var retval = arguments[0];
     for (var i = 1; i <= arguments.length; i++) {
       if (arguments[i] !== undefined) {
@@ -73,7 +72,6 @@ if (!Object.merge) {
         }
       }
     }
-    console.log("returning from merge " + retval);
     return retval;
   }
 }

@@ -14,8 +14,8 @@ describe("Player UI", function () {
   describe("Start and stop button", function () {
     it("should default to stopped", function () {
       var p = jsPlayer("nothing.mp3", {elementId: "testElement"});
-      expect(p.engine.element).toEqual("");
-      expect(p.controls.startStop.clasName).toEqual("startStop playerStopped");
+      expect(p.engine.isPlaying()).toBeFalsy();
+      expect(p.controls.startStop.className).toEqual("startStop playerStopped");
     });
   });
 });

@@ -33,7 +33,7 @@ var jsPlayerEngine = function (engineElement, params) {
   };
 
   outObject.isPlaying = function () {
-    return outObject.engineElement.paused;
+    return !outObject.engineElement.paused;
   };
 
   return outObject;
@@ -110,7 +110,7 @@ var jsPlayer = function (sourceURL, params) {
       if (params.controls && params.controls.startStop) {
         startStopElement = document.createElement("div");
         startStopElement.setAttribute("class", "startStop");
-        node.appendChild(e);
+        node.appendChild(startStopElement);
         outObject.controls.startStop = startStopElement;
       }
       if (params.controls && params.controls.volume) {
@@ -131,19 +131,19 @@ var jsPlayer = function (sourceURL, params) {
   helpers.playPause = function () {
     if (outObject.engine.isPlaying()) {
       outObject.engine.play();
-      outObject.controls.startStop.removeClass("playerStopped");
-      outObject.controls.startStop.addClass("playerStarted");
+      domExt.removeClass(outObject.controls.startStop, "playerStopped");
+      domExt.addClass(outObject.controls.startStop, "playerStarted");
     } else {
       outObject.engine.pause();
-      outObject.controls.startStop.removeClass("playerStarted");
-      outObject.controls.startStop.addClass("playerStopped");
+      domExt.removeClass(outObject.controls.startStop, "playerStarted");
+      domExt.addClass(outObject.controls.startStop, "playerStopped");
     }
   };
 
   if(params.autoStart) {
     helpers.playPause();
   } else {
-   outObject.controls.startStop.addClass("playerStopped");
+   domExt.addClass(outObject.controls.startStop, "playerStopped");
   }
 
   //event binding should be absolute last thing

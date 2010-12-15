@@ -72,7 +72,7 @@ if (!domExt.classArray) {
 
 if (!domExt.hasClass) {
   domExt.hasClass = function (el, klass) {
-    if (el.classArray().indexOf(klass) === -1) {
+    if (domExt.classArray(el).indexOf(klass) === -1) {
       return false;
     } else {
       return true;
@@ -82,7 +82,7 @@ if (!domExt.hasClass) {
 
 if (!domExt.addClass) {
   domExt.addClass = function (el, klass) {
-    if (el.hasClass(klass)) {
+    if (domExt.hasClass(el, klass)) {
       return;
     }
     el.className = el.className + " " + klass;
@@ -107,7 +107,6 @@ if (!domExt.removeClass) {
 if (!Object.merge) {
   Object.merge = function () {
     "use strict";
-    console.log("in merge");
     var retval = arguments[0];
     for (var i = 1; i <= arguments.length; i++) {
       if (arguments[i] !== undefined) {
@@ -118,7 +117,6 @@ if (!Object.merge) {
         }
       }
     }
-    console.log("returning from merge " + retval);
     return retval;
   }
 }
@@ -135,7 +133,7 @@ var jsPlayerUtils = {
 
 var jsPlayerEngine = function (engineElement, params) {
 
-  var outObject = {};
+  var outObject = {},
   params = params || {};
 
   if (!engineElement) {
@@ -165,22 +163,25 @@ var jsPlayerEngine = function (engineElement, params) {
 
 var jsPlayer = function (sourceURL, params) {
   var outObject = {},
-      helpers = {};
+      helpers = {},
+      defaultParams = {
+        elementId: "jsPlayer",
+        controls: {startStop: true, scrubber: true, volume: true}
+      };
 
   if (!sourceURL) {
     jsPlayerUtils.exception("ArgumentError", "URL of audio not provided");
   }
 
-  params = params || { controls: {startStop: true, scrubber: true, volume: true}};
+  params = Object.merge(params, defaultParams);
   outObject.source = sourceURL;
-  outObject.elementID = params.elementID || "jsPlayer";
+  outObject.elementId = params.elementId;
 
   outObject.controls = {
     toggleStartClass: function() {
       if (!params.controls && params.controls.startStop) {
         return;
       }
-      
     }
   };
 
@@ -202,11 +203,11 @@ var jsPlayer = function (sourceURL, params) {
 
   // detect audio engine
   (function () {
-    var node = document.getElementById(outObject.elementID),
+    var node = document.getElementById(outObject.elementId),
         el = document.createElement("audio");
     if (!node) {
       jsPlayerUtils.exception("RuntimeError", 
-        "Unable to find player element " + outObject.elementID);
+        "Unable to find player element " + outObject.elementId);
     }
     if (!el.canPlayType || !el.canPlayType(outObject.mimeType)) {
       // build flash elements
@@ -221,7 +222,7 @@ var jsPlayer = function (sourceURL, params) {
 
   // construct player controls
   (function () {
-    var node = document.getElementById(outObject.elementID),
+    var node = document.getElementById(outObject.elementId),
         startStopElement,
         volumeElement, 
         scrubElement;
@@ -231,7 +232,7 @@ var jsPlayer = function (sourceURL, params) {
       if (params.controls && params.controls.startStop) {
         startStopElement = document.createElement("div");
         startStopElement.setAttribute("class", "startStop");
-        node.appendChild(e);
+        node.appendChild(startStopElement);
         outObject.controls.startStop = startStopElement;
       }
       if (params.controls && params.controls.volume) {
@@ -244,7 +245,7 @@ var jsPlayer = function (sourceURL, params) {
         scrubElement = document.createElement("div");
         scrubElement.setAttribute("class", "scrubber");
         node.appendChild(scrubElement);
-        outObject.controls.scrubber = seekElement;
+        outObject.controls.scrubber = scrubElement;
       }
     }
   }());
@@ -252,19 +253,19 @@ var jsPlayer = function (sourceURL, params) {
   helpers.playPause = function () {
     if (outObject.engine.isPlaying()) {
       outObject.engine.play();
-      outObject.controls.startStop.removeClass("playerStopped");
-      outObject.controls.startStop.addClass("playerStarted");
+      domExt.removeClass(outObject.controls.startStop, "playerStopped");
+      domExt.addClass(outObject.controls.startStop, "playerStarted");
     } else {
       outObject.engine.pause();
-      outObject.controls.startStop.removeClass("playerStarted");
-      outObject.controls.startStop.addClass("playerStopped");
+      domExt.removeClass(outObject.controls.startStop, "playerStarted");
+      domExt.addClass(outObject.controls.startStop, "playerStopped");
     }
   };
 
   if(params.autoStart) {
     helpers.playPause();
   } else {
-   // outObject.controls.startStop.addClass("playerStopped");
+   domExt.addClass(outObject.controls.startStop, "playerStopped");
   }
 
   //event binding should be absolute last thing
