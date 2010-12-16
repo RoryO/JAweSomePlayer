@@ -44,6 +44,7 @@ var jsPlayer = function (sourceURL, params) {
       helpers = {},
       defaultParams = {
         elementId: "jsPlayer",
+        autostart: false,
         controls: {startStop: true, scrubber: true, volume: true}
       };
 
@@ -130,17 +131,17 @@ var jsPlayer = function (sourceURL, params) {
 
   helpers.playPause = function () {
     if (outObject.engine.isPlaying()) {
-      outObject.engine.play();
-      domExt.removeClass(outObject.controls.startStop, "playerStopped");
-      domExt.addClass(outObject.controls.startStop, "playerStarted");
-    } else {
       outObject.engine.pause();
-      domExt.removeClass(outObject.controls.startStop, "playerStarted");
       domExt.addClass(outObject.controls.startStop, "playerStopped");
+      domExt.removeClass(outObject.controls.startStop, "playerStarted");
+    } else {
+      outObject.engine.play();
+      domExt.addClass(outObject.controls.startStop, "playerStarted");
+      domExt.removeClass(outObject.controls.startStop, "playerStopped");
     }
   };
 
-  if(params.autoStart) {
+  if(params.autostart) {
     helpers.playPause();
   } else {
    domExt.addClass(outObject.controls.startStop, "playerStopped");
