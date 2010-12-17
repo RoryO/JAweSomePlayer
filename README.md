@@ -146,8 +146,7 @@ UPCOMING
 Video support
 Media playlists
 
-#### Many many many thanks to the absolutely awesome [Unobtrusive
-Javascript Slider](http://www.frequency-decoder.com/2010/11/18/unobtrusive-slider-control-html5-input-range-polyfill), without which this would never have gotten as far as it did.
+#### Many many many thanks to the absolutely awesome [Unobtrusive Javascript Slider](http://www.frequency-decoder.com/2010/11/18/unobtrusive-slider-control-html5-input-range-polyfill), without which this would never have gotten as far as it did.
 #### Thanks to the [SoundCloud API player](https://github.com/soundcloud/soundcloud-custom-player) for inspiration.
 
 (c) Rory O'Connell
