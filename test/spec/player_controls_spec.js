@@ -17,5 +17,11 @@ describe("Player UI", function () {
       expect(p.engine.isPlaying()).toBeFalsy();
       expect(p.controls.startStop.className).toEqual("startStop playerStopped");
     });
+
+    it("should be playing when passed autostart", function () {
+      var p = jsPlayer("nothing.mp3", {elementId: "testElement", autostart: true});
+      expect(p.engine.isPlaying()).toBeTruthy();
+      expect(p.controls.startStop.className).toEqual("startStop playerStarted");
+    });
   });
 });

@@ -158,6 +158,17 @@ var jsPlayerEngine = function (engineElement, params) {
     return !outObject.engineElement.paused;
   };
 
+  outObject.volume = function (n) {
+    n = Number(n);
+    if (n === NaN ) {
+      return outObject.engineElement.volume;
+    }
+    if (n < 0 || n > 1) {
+      jsPlayerUtils.exception("ArgumentError", "Volume input must be between 0 and 1.0");
+    }
+    outObject.engineElement.volume = n;
+  };
+
   return outObject;
 };
 
@@ -230,19 +241,29 @@ var jsPlayer = function (sourceURL, params) {
     if (outObject.engineType === "Native" && params.useNativeControls){
       outObject.engine.engineElement.setAttribute("controls", "controls");
     } else {
-      if (params.controls && params.controls.startStop) {
+      if (params.controls.startStop) {
         startStopElement = document.createElement("div");
         startStopElement.setAttribute("class", "startStop");
         node.appendChild(startStopElement);
         outObject.controls.startStop = startStopElement;
       }
-      if (params.controls && params.controls.volume) {
-        volumeElement = document.createElement("div");
+      if (params.controls.volume) {
+        volumeElement = document.createElement("input");
+        volumeElement.setAttribute("type", "text");
+        volumeElement.style.display = "none";
         volumeElement.setAttribute("class", "volumeSlider");
         node.appendChild(volumeElement);
+        fdSlider.createSlider({
+          inp: volumeElement,
+          step: 0.01,
+          maxStep: 0.1,
+          min: 0,
+          max: 1,
+          callbacks: {change: [ function(e) { outObject.engine.volume(e.value)} ]}
+        });
         outObject.controls.volume = volumeElement;
       }
-      if (params.controls && params.controls.scrubber) {
+      if (params.controls.scrubber) {
         scrubElement = document.createElement("div");
         scrubElement.setAttribute("class", "scrubber");
         node.appendChild(scrubElement);

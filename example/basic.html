@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script src="../js/slider.js" type="text/javascript" charset="utf-8"></script>
     <script src="../js/player.js" type="text/javascript" charset="utf-8"></script>
-    <script src="http://code.jquery.com/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
-    <script type="text/javascript" charset="utf-8">
-      $(document).ready(function() {
-        var pl = jsPlayer("libertango.mp3", {elementId: "studioPlayer"});
-      });
-    </script>
+    <link rel="stylesheet" href="slider.css" type="text/css" media="screen" charset="utf-8">
     <style type="text/css" media="screen">
+      #studioPlayer {
+        width: 300px;
+      }
       .startStop {
         width: 100px;
         height: 100px;
@@ -25,4 +24,12 @@
     <div id="studioPlayer">
     </div>
   </body>
+  <script src="../slider.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../js/player.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    function init() {
+      var pl = jsPlayer("libertango.mp3", {elementId: "studioPlayer"});
+    }
+    window.addEventListener('load', init, false);
+  </script>
 </html>
