@@ -43,3 +43,10 @@ if (!Array.prototype.indexOf) {
     return -1;
   };
 }
+
+//Can't be perfect, but it's as good as we're going to get without ES5
+if (!Array.prototype.isArray) {
+  Array.prototype.isArray = function(e) {
+    return Object.prototype.toString.call(e) === '[Object array]';
+  }
+}

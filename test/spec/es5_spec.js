@@ -18,7 +18,7 @@ describe("ECMAScript 5 new methods", function () {
       });
     });
 
-    describe("indexOf", function() {
+    describe("indexOf", function () {
 
       it("should return the correct index properly", function () {
         expect(arr.indexOf("four")).toEqual(4);
@@ -29,5 +29,31 @@ describe("ECMAScript 5 new methods", function () {
       });
 
     });
+
+    describe("isArray", function () {
+      it("should successfully detect an array", function () {
+        expect(Array.isArray(arr)).toBeTruthy();
+      });
+
+      it("should not successfully detect an object", function () {
+        expect(Array.isArray({0: "zero", 1: "one"})).toBeFalsy();
+      });
+
+      it("should not successfully detect a string", function () {
+        expect(Array.isArray("something")).toBeFalsy();
+      });
+
+      it("should not successfully detect a number", function () {
+        expect(Array.isArray(0)).toBeFalsy();
+      });
+
+      it("should not successfully detect NaN", function () {
+        expect(Array.isArray(NaN)).toBeFalsy();
+      });
+
+      it("should not successfully detect undefined", function () {
+        expect(Array.isArray(undefined)).toBeFalsy();
+      });
+    })
   });
 });
