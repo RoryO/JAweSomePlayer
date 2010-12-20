@@ -12,7 +12,8 @@ var jsPlayerUtils = {
 var jsPlayerEngine = function (engineElement, params) {
 
   var outObject = {},
-  params = params || {};
+      params = params || {},
+      callbacks = {};
 
   if (!engineElement) {
     jsPlayerUtils.exception("ArgumentError", "Engine element not provided");
@@ -20,16 +21,33 @@ var jsPlayerEngine = function (engineElement, params) {
     outObject.engineElement = engineElement;
   }
 
-  outObject.status = function () {
-    return outObject.engineElement.paused;
-  };
+  var fireCallbacksFor = function (name, data) {
+    if (callbacks[name]) {
+      for (var i = 0; i < callbacks[name].length; i++) {
+        callbacks[name][i].call(this, data);
+      }
+    }
+  }
+
+  outObject.bind = function(name, fun) {
+    if (typeof(fun) !== 'function') {
+      jsPlayerUtils.exception("TypeError", "Must provide a function as a callback");
+    }
+    callbacks[name] = callbacks[name] || [];
+    callbacks[name].push(fun);
+    return this;
+  }
 
   outObject.play = function () {
     outObject.engineElement.play();
+    fireCallbacksFor('onPlay');
+    return this;
   };
 
   outObject.pause = function () {
     outObject.engineElement.pause();
+    fireCallbacksFor('onPause');
+    return this;
   };
 
   outObject.isPlaying = function () {
@@ -45,8 +63,17 @@ var jsPlayerEngine = function (engineElement, params) {
       jsPlayerUtils.exception("ArgumentError", "Volume input must be between 0 and 1.0");
     }
     outObject.engineElement.volume = n;
+    fireCallbacksFor('volumeChange', outObject.engineElement.volume);
+    return this;
   };
 
+  outObject.timeChanged = function (e) {
+    fireCallbacksFor('timeChange');
+    return this;
+  }
+
+  //binding events from playback element to engine methods
+  outObject.engineElement.addEventListener('timeupdate', outObject.timeChanged, false);
   return outObject;
 };
 

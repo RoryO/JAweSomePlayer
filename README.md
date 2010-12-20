@@ -75,7 +75,7 @@ Set this to the element ID that you wish to wrap around.
 
 useFlash: Default: undefined.
 
-Set to something truthy to use only the  Flash playback engine.  If combined 
+Set to something truthy to use only the Flash playback engine.  If combined 
 with useNative, will have no effect.
 
 useNative: Default: undefined.
@@ -93,7 +93,77 @@ controls:
 
 Default: {startStop: true, scrubber: true, volume: true}
 
-Set any of the elements to something falsy
+Set any of the elements to something falsy if you don't want to build
+that set of controls.  You can still use the engine to manipulate the
+playback.
+
+
+CONTROLLING THE MEDIA
+===
+The jsPlayer function is mostly just a constructor function, deciding what
+type of playback element to use and creating the relevant elements,
+constructing the HTML controls and initializing the playback engine.
+The playback engine is a gateway object that routes external method
+calls to the playback element.  It is very strongly recommended not to 
+manipulate the playback element itself, as it could cause the engine to 
+fall out of sync with the state of the playback element.  Instead, use the 
+exposed methods on the engine object.  The engine is accessed through
+the engine property of the return object called from the jsPlayer()
+constructor, i.e
+    var player = jsPlayer("awesome.mp3");
+    player.engine.play();
+
+You can also register callbacks for all of the events handled by the
+engine.  Register a new event with the .bind method on the engine.
+    player.engine.bind('timeChange', function (t) { console.log('Time
+changed to ' + t)});
+
+
+ENGINE CONTROL METHODS
+===
+play(): Starts playback
+pause(): Pauses playback
+volume(n): Changes the volume, must be between 0 and 1.0
+
+ENGINE PROPERTIES
+===
+isPlaying(): Boolean if engine is playing
+volume(): Decimal value of the current volume
+currentPosition(): Current playback position in seconds
+
+
+ENGINE CALLBACKS
+===
+volumeChange: When the volume has changed.  Passes the new value of the
+volume in decimal form between 0 and 1 to the callback i.e. 0.34.
+
+timeChange: When the player element reports that the playback position
+has changed. Passes the new value of the time reported by the playback
+element in seconds.
+
+onPlay: When player state moved from paused to playing.
+
+onPause: When player state is moved from playing to pause.
+
+
+CONTRIBUTING
+===
+
+Bug fixes and code simplifications are very welcome.  Adding features
+should be discussed on the Github project page first.  Contributing is
+standard Github procedure to make things simpler for everyone
+
+-Fork the project on Github
+-Perform the work on your own branch
+-Create a working test for the work you did if anything changed
+-Ensure all the tests pass
+-Rebuild the javascript files by running 'rake javascripts' or the flash
+component by running 'rake compile'
+-Push back to Github
+-If it does not already exist, open a bug or feature ticket report on the 
+Github page describing the work
+-Submit a pull request with your branch
+
 QUESTIONS
 ===
 Q: Why not use jQuery or something similar?
