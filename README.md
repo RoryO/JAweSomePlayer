@@ -115,20 +115,24 @@ constructor, i.e
 
 You can also register callbacks for all of the events handled by the
 engine.  Register a new event with the .bind method on the engine.
-    player.engine.bind('timeChange', function (t) { console.log('Time
-changed to ' + t)});
+    player.engine.bind('timeChange', function (t) { console.log('Time changed to ' + t)});
 
 
 ENGINE CONTROL METHODS
 ===
 play(): Starts playback
+
 pause(): Pauses playback
+
 volume(n): Changes the volume, must be between 0 and 1.0
+
 
 ENGINE PROPERTIES
 ===
 isPlaying(): Boolean if engine is playing
+
 volume(): Decimal value of the current volume
+
 currentPosition(): Current playback position in seconds
 
 
@@ -154,14 +158,20 @@ should be discussed on the Github project page first.  Contributing is
 standard Github procedure to make things simpler for everyone
 
 -Fork the project on Github
+
 -Perform the work on your own branch
+
 -Create a working test for the work you did if anything changed
+
 -Ensure all the tests pass
+
 -Rebuild the javascript files by running 'rake javascripts' or the flash
 component by running 'rake compile'
 -Push back to Github
+
 -If it does not already exist, open a bug or feature ticket report on the 
 Github page describing the work
+
 -Submit a pull request with your branch
 
 QUESTIONS
