@@ -53,7 +53,6 @@ var jsPlayerEngine = function (engineElement, params) {
   };
 
   outObject.seekTo = function (n) {
-    console.log("should be jumping to " + n);
     outObject.engineElement.currentPosition = n;
   };
 

@@ -1369,7 +1369,6 @@ var jsPlayerEngine = function (engineElement, params) {
   };
 
   outObject.seekTo = function (n) {
-    console.log("should be jumping to " + n);
     outObject.engineElement.currentPosition = n;
   };
 
@@ -1418,6 +1417,7 @@ var jsPlayer = function (sourceURL, params) {
   }
 
   params = Object.merge(params, defaultParams);
+  console.log(params);
   elementId = params.elementId;
 
   mimeType = (function () {
