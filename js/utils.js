@@ -59,6 +59,19 @@ if (!domExt.removeClass) {
   };
 }
 
+if (!domExt.bindEvent) {
+  domExt.bindEvent = function (el, event, fun) {
+    if (typeof(fun) !== 'function') {
+      throw new TypeError("Must pass in a function to be bound");
+    }
+    if (document.addEventListener) {
+      el.addEventListener(event, fun, false);
+    } else {
+      //hi IE
+      el.attachEvent(event, fun);
+    }
+  }
+}
 if (!Object.merge) {
   Object.merge = function () {
     "use strict";
@@ -75,3 +88,14 @@ if (!Object.merge) {
     return retval;
   }
 }
+
+if (!exception) {
+  var exception = function (type, m) {
+    var ex = new Error();
+    ex.name = type;
+    //for Firefox
+    ex.value = type;
+    ex.message = m;
+    throw (ex);
+  }
+};

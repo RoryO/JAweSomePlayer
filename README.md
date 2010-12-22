@@ -138,6 +138,10 @@ currentPosition(): Current playback position in seconds
 
 ENGINE CALLBACKS
 ===
+engineReady: When the engine has loaded enough information about the
+media file to start playback.  It is recommeded that all controls be
+disabled and uninitialized until the engine is ready.
+
 volumeChange: When the volume has changed.  Passes the new value of the
 volume in decimal form between 0 and 1 to the callback i.e. 0.34.
 
