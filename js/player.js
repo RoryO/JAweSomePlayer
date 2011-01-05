@@ -67,19 +67,23 @@ if (!Array.prototype.cycle) {
   };
 }
 
-if(!domExt) {
-  var domExt = {};
+if(!jsPlayer) {
+  var jsPlayer = {};
 }
 
-if (!domExt.classArray) {
-  domExt.classArray = function (el) {
+if (!jsPlayer.domExt) {
+  jsPlayer.domExt = {};
+}
+
+if (!jsPlayer.domExt.classArray) {
+  jsPlayer.domExt.classArray = function (el) {
     return el.className.split(" ");
   };
 }
 
-if (!domExt.hasClass) {
-  domExt.hasClass = function (el, klass) {
-    if (domExt.classArray(el).indexOf(klass) === -1) {
+if (!jsPlayer.domExt.hasClass) {
+  jsPlayer.domExt.hasClass = function (el, klass) {
+    if (jsPlayer.domExt.classArray(el).indexOf(klass) === -1) {
       return false;
     } else {
       return true;
@@ -87,22 +91,22 @@ if (!domExt.hasClass) {
   };
 }
 
-if (!domExt.addClass) {
-  domExt.addClass = function (el, klass) {
-    if (domExt.hasClass(el, klass)) {
+if (!jsPlayer.domExt.addClass) {
+  jsPlayer.domExt.addClass = function (el, klass) {
+    if (jsPlayer.domExt.hasClass(el, klass)) {
       return;
     }
     el.className = el.className + " " + klass;
   };
 }
 
-if (!domExt.removeClass) {
-  domExt.removeClass = function (el, klass) {
-    if (!domExt.hasClass(el, klass)) {
+if (!jsPlayer.domExt.removeClass) {
+  jsPlayer.domExt.removeClass = function (el, klass) {
+    var classList;
+    if (!jsPlayer.domExt.hasClass(el, klass)) {
       return;
     }
-    var classList;
-    classList = domExt.classArray(el).filter(function (member, i, a) {
+    classList = jsPlayer.domExt.classArray(el).filter(function (member, i, a) {
       if (member !== klass) {
         return member;
       }
@@ -111,16 +115,18 @@ if (!domExt.removeClass) {
   };
 }
 
-if (!domExt.bindEvent) {
-  domExt.bindEvent = function (el, event, fun) {
+if (!jsPlayer.domExt.bindEvent) {
+  jsPlayer.domExt.bindEvent = function (el, eventName, fun) {
+    console.log("should be binding event");
+    console.log(fun);
     if (typeof(fun) !== 'function') {
       throw new TypeError("Must pass in a function to be bound");
     }
     if (document.addEventListener) {
-      el.addEventListener(event, fun, false);
+      el.addEventListener(eventName, fun, false);
     } else {
       //hi IE
-      el.attachEvent(event, fun);
+      el.attachEvent(eventName, fun);
     }
   }
 }
@@ -141,15 +147,13 @@ if (!Object.merge) {
   }
 }
 
-if (!exception) {
-  var exception = function (type, m) {
-    var ex = new Error();
-    ex.name = type;
-    //for Firefox
-    ex.value = type;
-    ex.message = m;
-    throw (ex);
-  }
+jsPlayer.exception = function (type, m) {
+  var ex = new Error();
+  ex.name = type;
+  //for Firefox
+  ex.value = type;
+  ex.message = m;
+  throw (ex);
 };
 /*
 * Unobtrusive Slider Control 
@@ -1314,69 +1318,63 @@ var fdSlider = (function() {
     removeOnload:           function() { removeOnLoadEvent(); }                      
   }
 })();             
-/*global exception: false */
-var jsPlayerEngine = function (engineElement, params) {
+var jsPlayer = jsPlayer || {};
 
+jsPlayer.engine = function (engineElement, elementType, argp) {
+  "use strict";
   var outObject = {},
-      params = params || {},
-      callbacks = {},
+      params = argp || {},
+      outer = this,
       fireCallbacksFor,
       engineReady,
-      timeChanged;
+      timeChanged,
+      events = {},
+      getProperty, setProperty;
 
   if (!engineElement) {
-    exception("ArgumentError", "Engine element not provided");
+    jsPlayer.exception("ArgumentError", "Engine element not provided");
   }
 
-  outObject.bind = function (name, fun) {
-    if (typeof(fun) !== 'function') {
-      exception("TypeError", "Must provide a function as a callback");
-    }
-    callbacks[name] = callbacks[name] || [];
-    callbacks[name].push(fun);
-    return this;
-  };
-
-  outObject.play = function () {
-    engineElement.play();
-    fireCallbacksFor('onPlay');
-    return this;
-  };
-
-  outObject.pause = function () {
-    engineElement.pause();
-    fireCallbacksFor('onPause');
-    return this;
-  };
-
-  outObject.isPlaying = function () {
-    return !engineElement.paused;
-  };
-
-  outObject.volume = function (n) {
-    n = Number(n);
-    if (isNaN(n)) {
-      return engineElement.volume;
-    }
-    if (n < 0 || n > 1) {
-      exception("ArgumentError", "Volume input must be between 0 and 1.0");
-    }
-    engineElement.volume = n;
-    fireCallbacksFor('volumeChange', engineElement.volume);
-    return this;
-  };
-
-  outObject.seekTo = function (n) {
-    engineElement.currentPosition = n;
-  };
-
-  outObject.length = function () {
-    return engineElement.duration;
+  if (!elementType) {
+    jsPlayer.exception("ArgumentError", "Element type not provided");
   }
+
 
   //privacy, yo
-  fireCallbacksFor = function (name, data) {
-    if (callbacks[name]) {
+
+
+  //the reason for this nonsense is because flash ExternalInterface does not
+  //allow for exposing properties, only functions.  what a fucking mess.
+  getProperty = function (p) {
+    if (elementType === 'flash') {
+      return engineElement[p]();
+    } else {
+      return engineElement[p];
+    }
+  };
+
+  setProperty = function (p, n) {
+    if (elementType === 'flash') {
+      engineElement[p](n);
+    } else {
+      engineElement[p] = n;
+    }
+  };
+
+  events.callbacks = {};
+  //more dumb shit.  flash doesn't have an external addEventListener, the best 
+  //we can hope for is a a custom event handler class interal in flash.  problem is, 
+  //flash can't find external functions by reference, only by string name
+  events.register = function (eventName, callbackName) {
+    if (elementType === 'flash') {
+      engineElement.addEventListener(eventName, callbackName);
+    } else {
+      jsPlayer.domExt.bindEvent(engineElement, eventName, events[callbackName]);
+    }
+  };
+
+  events.fireCallbacksFor = function (name, data) {
+    if (events.callbacks[name]) {
       (function (context) {
         for (var i = 0; i < callbacks[name].length; i += 1) {
           callbacks[name][i].call(context, data);
@@ -1385,23 +1383,74 @@ var jsPlayerEngine = function (engineElement, params) {
     }
   };
 
-  timeChanged = function () {
-    fireCallbacksFor('timeChange', outObject.engineElement.currentTime);
+  //internal callbacks
+  events.timeChanged = function () {
+    events.fireCallbacksFor('timeChange', engineElement.currentTime);
   };
 
-  engineReady = function () {
-    fireCallbacksFor('engineReady');
+  events.engineReady = function () {
+    events.fireCallbacksFor('engineReady');
   };
 
   //binding events from playback element to engine methods
-  engineElement.addEventListener('timeupdate', timeChanged, false);
-  engineElement.addEventListener('loadeddata', engineReady, false);
-  outObject.engineElement = engineElement;
-  return outObject;
-};
-/*global domExt: false, fdSlider: false, exception: false, jsPlayerEngine: false */
+  events.register('timeupdate', "timeChanged");
+  events.register('loadeddata', "engineReady");
 
-var jsPlayer = function (sourceURL, params) {
+  return {
+    engineElement: engineElement,
+
+    bind: function (name, fun) {
+      if (typeof(fun) !== 'function') {
+        jsPlayer.exception("TypeError", "Must provide a function as a callback");
+      }
+      callbacks[name] = callbacks[name] || [];
+      callbacks[name].push(fun);
+      return this;
+    },
+
+    play: function () {
+      engineElement.play();
+      fireCallbacksFor('onPlay');
+      return this;
+    },
+
+    pause: function () {
+      engineElement.pause();
+      fireCallbacksFor('onPause');
+      return this;
+    },
+
+    isPlaying: function () {
+      return !engineElement.paused;
+    },
+
+    volume: function (n) {
+      n = Number(n);
+      if (isNaN(n)) {
+        return engineElement.volume;
+      }
+      if (n < 0 || n > 1) {
+        jsPlayer.exception("ArgumentError", "Volume input must be between 0 and 1.0");
+      }
+      setProperty('volume', n);
+      fireCallbacksFor('volumeChange', getProperty('volume'));
+      return this;
+    },
+
+    seekTo: function (n) {
+      setProperty('currentPosition', n);
+    },
+
+    length: function () {
+      return engineElement.duration;
+    }
+  };
+};
+/*global fdSlider: false, swfObject: false */
+var jsPlayer = jsPlayer || {};
+
+jsPlayer.create = function (sourceURL, params) {
+  "use strict";
   var controls = {},
       playbackReady,
       mimeType,
@@ -1416,7 +1465,7 @@ var jsPlayer = function (sourceURL, params) {
       };
 
   if (!sourceURL) {
-    exception("ArgumentError", "URL of audio not provided");
+    jsPlayer.exception("ArgumentError", "URL of audio not provided");
   }
 
   params = Object.merge(params, defaultParams);
@@ -1433,7 +1482,7 @@ var jsPlayer = function (sourceURL, params) {
     } else if (params.format && audioTypes[params.format]) {
       retval = audioTypes[params.format];
     } else {
-      exception("ArgumentError",
+      jsPlayer.exception("ArgumentError",
         "Can not find media type.  Provide a format member in the parameters object");
     }
     return retval;
@@ -1444,17 +1493,16 @@ var jsPlayer = function (sourceURL, params) {
     var node = document.getElementById(elementId),
         el = document.createElement("audio");
     if (!node) {
-      exception("RuntimeError", 
+      jsPlayer.exception("RuntimeError", 
         "Unable to find player element " + elementId);
     }
     if (!el.canPlayType || !el.canPlayType(mimeType)) {
+      swfObject.create();
       // build flash elements
-      outObject.engineType = "Flash";
     } else {
       el.setAttribute("src", sourceURL);
       node.appendChild(el);
-      outObject.engineType =  "Native";
-      engine = jsPlayerEngine(el);
+      engine = jsPlayer.engine(el, "Native");
     }
   }());
 
@@ -1470,8 +1518,8 @@ var jsPlayer = function (sourceURL, params) {
     } else {
       if (params.controls.startStop) {
         startStopElement = document.createElement("div");
-        domExt.addClass(startStopElement, "startStop");
-        domExt.addClass(startStopElement, "startStopLoading");
+        jsPlayer.domExt.addClass(startStopElement, "startStop");
+        jsPlayer.domExt.addClass(startStopElement, "startStopLoading");
         node.appendChild(startStopElement);
         controls.startStop = startStopElement;
       }
@@ -1511,17 +1559,17 @@ var jsPlayer = function (sourceURL, params) {
 
   playbackReady = function () {
     if (controls.startStop) {
-      domExt.removeClass(controls.startStop, "startStopLoading");
-      domExt.addClass(controls.startStop, "playerStopped");
+      jsPlayer.domExt.removeClass(controls.startStop, "startStopLoading");
+      jsPlayer.domExt.addClass(controls.startStop, "playerStopped");
       engine.bind('onPlay', function () {
-        domExt.removeClass(controls.startStop, "playerStopped");
-        domExt.addClass(controls.startStop, "playerStarted");
+        jsPlayer.domExt.removeClass(controls.startStop, "playerStopped");
+        jsPlayer.domExt.addClass(controls.startStop, "playerStarted");
       });
       engine.bind('onPause', function () {
-        domExt.removeClass(controls.startStop, "playerStarted");
-        domExt.addClass(controls.startStop, "playerStopped");
+        jsPlayer.domExt.removeClass(controls.startStop, "playerStarted");
+        jsPlayer.domExt.addClass(controls.startStop, "playerStopped");
       });
-      domExt.bindEvent(controls.startStop, 'click', function () {
+      jsPlayer.domExt.bindEvent(controls.startStop, 'click', function () {
         if (engine.isPlaying()) {
           engine.pause();
         } else {
