@@ -1326,8 +1326,6 @@ var jsPlayerEngine = function (engineElement, params) {
 
   if (!engineElement) {
     exception("ArgumentError", "Engine element not provided");
-  } else {
-    outObject.engineElement = engineElement;
   }
 
   outObject.bind = function (name, fun) {
@@ -1340,37 +1338,41 @@ var jsPlayerEngine = function (engineElement, params) {
   };
 
   outObject.play = function () {
-    outObject.engineElement.play();
+    engineElement.play();
     fireCallbacksFor('onPlay');
     return this;
   };
 
   outObject.pause = function () {
-    outObject.engineElement.pause();
+    engineElement.pause();
     fireCallbacksFor('onPause');
     return this;
   };
 
   outObject.isPlaying = function () {
-    return !outObject.engineElement.paused;
+    return !engineElement.paused;
   };
 
   outObject.volume = function (n) {
     n = Number(n);
     if (isNaN(n)) {
-      return outObject.engineElement.volume;
+      return engineElement.volume;
     }
     if (n < 0 || n > 1) {
       exception("ArgumentError", "Volume input must be between 0 and 1.0");
     }
-    outObject.engineElement.volume = n;
-    fireCallbacksFor('volumeChange', outObject.engineElement.volume);
+    engineElement.volume = n;
+    fireCallbacksFor('volumeChange', engineElement.volume);
     return this;
   };
 
   outObject.seekTo = function (n) {
-    outObject.engineElement.currentPosition = n;
+    engineElement.currentPosition = n;
   };
+
+  outObject.length = function () {
+    return engineElement.duration;
+  }
 
   //privacy, yo
   fireCallbacksFor = function (name, data) {
@@ -1392,8 +1394,9 @@ var jsPlayerEngine = function (engineElement, params) {
   };
 
   //binding events from playback element to engine methods
-  outObject.engineElement.addEventListener('timeupdate', timeChanged, false);
-  outObject.engineElement.addEventListener('loadeddata', engineReady, false);
+  engineElement.addEventListener('timeupdate', timeChanged, false);
+  engineElement.addEventListener('loadeddata', engineReady, false);
+  outObject.engineElement = engineElement;
   return outObject;
 };
 /*global domExt: false, fdSlider: false, exception: false, jsPlayerEngine: false */
@@ -1417,7 +1420,6 @@ var jsPlayer = function (sourceURL, params) {
   }
 
   params = Object.merge(params, defaultParams);
-  console.log(params);
   elementId = params.elementId;
 
   mimeType = (function () {
@@ -1477,6 +1479,7 @@ var jsPlayer = function (sourceURL, params) {
         volumeElement = document.createElement("input");
         volumeElement.setAttribute("type", "text");
         volumeElement.style.display = "none";
+        volumeElement.setAttribute("value", 1);
         volumeElement.setAttribute("class", "volumeSlider");
         node.appendChild(volumeElement);
         controls.volume = volumeElement;
@@ -1486,6 +1489,7 @@ var jsPlayer = function (sourceURL, params) {
           maxStep: 0.1,
           min: 0,
           max: 1,
+          vertical: true,
           callbacks: {change: [
             function (e) {
               outObject.engine.volume(e.value);
@@ -1494,7 +1498,10 @@ var jsPlayer = function (sourceURL, params) {
         });
       }
       if (params.controls.scrubber) {
-        scrubElement = document.createElement("div");
+        scrubElement = document.createElement("input");
+        scrubElement.setAttribute("type", "text");
+        scrubElement.style.display = "none";
+        scrubElement.setAttribute("value", 0);
         scrubElement.setAttribute("class", "scrubber");
         node.appendChild(scrubElement);
         controls.scrubber = scrubElement;
@@ -1523,11 +1530,21 @@ var jsPlayer = function (sourceURL, params) {
       });
     }
 
+    if (controls.scrubber) {
+      fdSlider.destroySlider(controls.scrubber);
+      fdSlider.createSlider({
+        inp: controls.scrubber,
+        step: 1,
+        maxStep: 1,
+        min: 0,
+        max: engine.length()
+      });
+    }
+
     if (params.autostart) {
       engine.play();
     }
   };
-
 
   //event bindings
   engine.bind('engineReady', playbackReady);

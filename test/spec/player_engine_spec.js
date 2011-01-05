@@ -14,7 +14,7 @@ describe("Player engine", function () {
   describe("Engine access methods", function () {
     var p;
     beforeEach(function () {
-      p = jsPlayer("blank.mp3", {elementId: "testElement"});
+      p = jsPlayer.create("blank.mp3", {elementId: "testElement"});
     });
 
     afterEach(function () {
@@ -35,7 +35,7 @@ describe("Player engine", function () {
   describe("Engine callbacks", function () {
     var p;
     beforeEach(function () {
-      p = jsPlayer("blank.mp3", {elementId: "testElement"});
+      p = jsPlayer.create("blank.mp3", {elementId: "testElement"});
     });
 
     afterEach(function () {

@@ -15,19 +15,23 @@ if (!Array.prototype.cycle) {
   };
 }
 
-if(!domExt) {
-  var domExt = {};
+if(!jsPlayer) {
+  var jsPlayer = {};
 }
 
-if (!domExt.classArray) {
-  domExt.classArray = function (el) {
+if (!jsPlayer.domExt) {
+  jsPlayer.domExt = {};
+}
+
+if (!jsPlayer.domExt.classArray) {
+  jsPlayer.domExt.classArray = function (el) {
     return el.className.split(" ");
   };
 }
 
-if (!domExt.hasClass) {
-  domExt.hasClass = function (el, klass) {
-    if (domExt.classArray(el).indexOf(klass) === -1) {
+if (!jsPlayer.domExt.hasClass) {
+  jsPlayer.domExt.hasClass = function (el, klass) {
+    if (jsPlayer.domExt.classArray(el).indexOf(klass) === -1) {
       return false;
     } else {
       return true;
@@ -35,22 +39,22 @@ if (!domExt.hasClass) {
   };
 }
 
-if (!domExt.addClass) {
-  domExt.addClass = function (el, klass) {
-    if (domExt.hasClass(el, klass)) {
+if (!jsPlayer.domExt.addClass) {
+  jsPlayer.domExt.addClass = function (el, klass) {
+    if (jsPlayer.domExt.hasClass(el, klass)) {
       return;
     }
     el.className = el.className + " " + klass;
   };
 }
 
-if (!domExt.removeClass) {
-  domExt.removeClass = function (el, klass) {
-    if (!domExt.hasClass(el, klass)) {
+if (!jsPlayer.domExt.removeClass) {
+  jsPlayer.domExt.removeClass = function (el, klass) {
+    var classList;
+    if (!jsPlayer.domExt.hasClass(el, klass)) {
       return;
     }
-    var classList;
-    classList = domExt.classArray(el).filter(function (member, i, a) {
+    classList = jsPlayer.domExt.classArray(el).filter(function (member, i, a) {
       if (member !== klass) {
         return member;
       }
@@ -59,16 +63,18 @@ if (!domExt.removeClass) {
   };
 }
 
-if (!domExt.bindEvent) {
-  domExt.bindEvent = function (el, event, fun) {
+if (!jsPlayer.domExt.bindEvent) {
+  jsPlayer.domExt.bindEvent = function (el, eventName, fun) {
+    console.log("should be binding event");
+    console.log(fun);
     if (typeof(fun) !== 'function') {
       throw new TypeError("Must pass in a function to be bound");
     }
     if (document.addEventListener) {
-      el.addEventListener(event, fun, false);
+      el.addEventListener(eventName, fun, false);
     } else {
       //hi IE
-      el.attachEvent(event, fun);
+      el.attachEvent(eventName, fun);
     }
   }
 }
@@ -89,13 +95,11 @@ if (!Object.merge) {
   }
 }
 
-if (!exception) {
-  var exception = function (type, m) {
-    var ex = new Error();
-    ex.name = type;
-    //for Firefox
-    ex.value = type;
-    ex.message = m;
-    throw (ex);
-  }
+jsPlayer.exception = function (type, m) {
+  var ex = new Error();
+  ex.name = type;
+  //for Firefox
+  ex.value = type;
+  ex.message = m;
+  throw (ex);
 };

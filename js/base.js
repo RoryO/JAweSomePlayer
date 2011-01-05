@@ -1,6 +1,8 @@
-/*global domExt: false, fdSlider: false, exception: false, jsPlayerEngine: false */
+/*global fdSlider: false, swfObject: false */
+var jsPlayer = jsPlayer || {};
 
-var jsPlayer = function (sourceURL, params) {
+jsPlayer.create = function (sourceURL, params) {
+  "use strict";
   var controls = {},
       playbackReady,
       mimeType,
@@ -15,11 +17,10 @@ var jsPlayer = function (sourceURL, params) {
       };
 
   if (!sourceURL) {
-    exception("ArgumentError", "URL of audio not provided");
+    jsPlayer.exception("ArgumentError", "URL of audio not provided");
   }
 
   params = Object.merge(params, defaultParams);
-  console.log(params);
   elementId = params.elementId;
 
   mimeType = (function () {
@@ -33,7 +34,7 @@ var jsPlayer = function (sourceURL, params) {
     } else if (params.format && audioTypes[params.format]) {
       retval = audioTypes[params.format];
     } else {
-      exception("ArgumentError",
+      jsPlayer.exception("ArgumentError",
         "Can not find media type.  Provide a format member in the parameters object");
     }
     return retval;
@@ -44,17 +45,16 @@ var jsPlayer = function (sourceURL, params) {
     var node = document.getElementById(elementId),
         el = document.createElement("audio");
     if (!node) {
-      exception("RuntimeError", 
+      jsPlayer.exception("RuntimeError", 
         "Unable to find player element " + elementId);
     }
     if (!el.canPlayType || !el.canPlayType(mimeType)) {
+      swfObject.create();
       // build flash elements
-      outObject.engineType = "Flash";
     } else {
       el.setAttribute("src", sourceURL);
       node.appendChild(el);
-      outObject.engineType =  "Native";
-      engine = jsPlayerEngine(el);
+      engine = jsPlayer.engine(el, "Native");
     }
   }());
 
@@ -70,8 +70,8 @@ var jsPlayer = function (sourceURL, params) {
     } else {
       if (params.controls.startStop) {
         startStopElement = document.createElement("div");
-        domExt.addClass(startStopElement, "startStop");
-        domExt.addClass(startStopElement, "startStopLoading");
+        jsPlayer.domExt.addClass(startStopElement, "startStop");
+        jsPlayer.domExt.addClass(startStopElement, "startStopLoading");
         node.appendChild(startStopElement);
         controls.startStop = startStopElement;
       }
@@ -79,6 +79,7 @@ var jsPlayer = function (sourceURL, params) {
         volumeElement = document.createElement("input");
         volumeElement.setAttribute("type", "text");
         volumeElement.style.display = "none";
+        volumeElement.setAttribute("value", 1);
         volumeElement.setAttribute("class", "volumeSlider");
         node.appendChild(volumeElement);
         controls.volume = volumeElement;
@@ -88,6 +89,7 @@ var jsPlayer = function (sourceURL, params) {
           maxStep: 0.1,
           min: 0,
           max: 1,
+          vertical: true,
           callbacks: {change: [
             function (e) {
               outObject.engine.volume(e.value);
@@ -96,7 +98,10 @@ var jsPlayer = function (sourceURL, params) {
         });
       }
       if (params.controls.scrubber) {
-        scrubElement = document.createElement("div");
+        scrubElement = document.createElement("input");
+        scrubElement.setAttribute("type", "text");
+        scrubElement.style.display = "none";
+        scrubElement.setAttribute("value", 0);
         scrubElement.setAttribute("class", "scrubber");
         node.appendChild(scrubElement);
         controls.scrubber = scrubElement;
@@ -106,17 +111,17 @@ var jsPlayer = function (sourceURL, params) {
 
   playbackReady = function () {
     if (controls.startStop) {
-      domExt.removeClass(controls.startStop, "startStopLoading");
-      domExt.addClass(controls.startStop, "playerStopped");
+      jsPlayer.domExt.removeClass(controls.startStop, "startStopLoading");
+      jsPlayer.domExt.addClass(controls.startStop, "playerStopped");
       engine.bind('onPlay', function () {
-        domExt.removeClass(controls.startStop, "playerStopped");
-        domExt.addClass(controls.startStop, "playerStarted");
+        jsPlayer.domExt.removeClass(controls.startStop, "playerStopped");
+        jsPlayer.domExt.addClass(controls.startStop, "playerStarted");
       });
       engine.bind('onPause', function () {
-        domExt.removeClass(controls.startStop, "playerStarted");
-        domExt.addClass(controls.startStop, "playerStopped");
+        jsPlayer.domExt.removeClass(controls.startStop, "playerStarted");
+        jsPlayer.domExt.addClass(controls.startStop, "playerStopped");
       });
-      domExt.bindEvent(controls.startStop, 'click', function () {
+      jsPlayer.domExt.bindEvent(controls.startStop, 'click', function () {
         if (engine.isPlaying()) {
           engine.pause();
         } else {
@@ -125,11 +130,21 @@ var jsPlayer = function (sourceURL, params) {
       });
     }
 
+    if (controls.scrubber) {
+      fdSlider.destroySlider(controls.scrubber);
+      fdSlider.createSlider({
+        inp: controls.scrubber,
+        step: 1,
+        maxStep: 1,
+        min: 0,
+        max: engine.length()
+      });
+    }
+
     if (params.autostart) {
       engine.play();
     }
   };
-
 
   //event bindings
   engine.bind('engineReady', playbackReady);

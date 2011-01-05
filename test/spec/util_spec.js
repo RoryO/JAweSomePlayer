@@ -23,21 +23,21 @@ describe("DOM element additions", function () {
   });
 
   it("should return a array of element classes", function () {
-    expect(domExt.classArray(el)).toEqual(["one", "two", "three", "four", "five"]);
+    expect(jsPlayer.domExt.classArray(el)).toEqual(["one", "two", "three", "four", "five"]);
   });
 
   it("should properly find a class name", function () {
-    expect(domExt.hasClass(el, "three")).toBeTruthy();
-    expect(domExt.hasClass(el, "nothing")).toBeFalsy();
+    expect(jsPlayer.domExt.hasClass(el, "three")).toBeTruthy();
+    expect(jsPlayer.domExt.hasClass(el, "nothing")).toBeFalsy();
   });
 
   it("should be able to add classes", function () {
-    domExt.addClass(el, "newClass");
+    jsPlayer.domExt.addClass(el, "newClass");
     expect(el.className).toEqual("one two three four five newClass");
   });
 
   it("should be able to remove classes", function () {
-    domExt.removeClass(el, "three");
+    jsPlayer.domExt.removeClass(el, "three");
     expect(el.className).toEqual("one two four five");
   });
 

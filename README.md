@@ -36,7 +36,7 @@ the document.
     <script src="/js/js_player.js"></script>
 
 After the script has been loaded, create a new player object in
-Javascript.  This is done with the jsPlayer() function.  The first argument 
+Javascript.  This is done with the jsPlayer.create() function.  The first argument 
 is the URL of the media file, the second parameter is an options object for 
 controlling how and where the player is built (see [options object](#options))
 
@@ -46,12 +46,12 @@ needed.  Utilizing a proven library will take the pain out of this for you.
 
 With [jQuery](http://jquery.org)
     jQuery(document).ready(function() {
-      var player = jsPlayer("http://localhost/my_file.mp3", {elementID: "myPlayer"})
+      var player = jsPlayer.create("http://localhost/my_file.mp3", {elementID: "myPlayer"})
     })
 
 [Prototype](http://prototypejs.org)
     Event.observe('dom:loaded', function() {
-      var player = jsPlayer("http://localhost/my_file.mp3", {elementID:"myPlayer"})
+      var player = jsPlayer.create("http://localhost/my_file.mp3", {elementID:"myPlayer"})
     })
 
 The library will automatically attempt to determine the MIME type of
@@ -100,7 +100,7 @@ playback.
 
 CONTROLLING THE MEDIA
 ===
-The jsPlayer function is mostly just a constructor function, deciding what
+The jsPlayer.create() function is mostly just a constructor function, deciding what
 type of playback element to use and creating the relevant elements,
 constructing the HTML controls and initializing the playback engine.
 The playback engine is a gateway object that routes external method
@@ -108,9 +108,9 @@ calls to the playback element.  It is very strongly recommended not to
 manipulate the playback element itself, as it could cause the engine to 
 fall out of sync with the state of the playback element.  Instead, use the 
 exposed methods on the engine object.  The engine is accessed through
-the engine property of the return object called from the jsPlayer()
+the engine property of the return object called from the jsPlayer.create()
 constructor, i.e
-    var player = jsPlayer("awesome.mp3");
+    var player = jsPlayer.create("awesome.mp3");
     player.engine.play();
 
 You can also register callbacks for all of the events handled by the
