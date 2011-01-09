@@ -1,0 +1,5 @@
+<flex-config>
+  <compiler>
+    <debug>true</debug>
+  </compiler>
+</flex-config>

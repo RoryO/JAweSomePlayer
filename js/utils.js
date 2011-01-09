@@ -65,8 +65,6 @@ if (!jsPlayer.domExt.removeClass) {
 
 if (!jsPlayer.domExt.bindEvent) {
   jsPlayer.domExt.bindEvent = function (el, eventName, fun) {
-    console.log("should be binding event");
-    console.log(fun);
     if (typeof(fun) !== 'function') {
       throw new TypeError("Must pass in a function to be bound");
     }
