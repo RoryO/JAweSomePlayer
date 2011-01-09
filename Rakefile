@@ -20,4 +20,17 @@ end
 task :clean do
   rm_rf 'js/player.js'
   rm_rf 'js/player-min.js'
+  rm_rf 'flash/JAwesomePlayer.swf'
+end
+
+task :flash do
+  Dir.chdir 'flash'
+  system 'mxmlc -load-config base.xml release.xml'
+  Dir.chdir '..'
+end
+
+task :flash_debug do
+  Dir.chdir 'flash'
+  system 'mxmlc -load-config base.xml debug.xml'
+  Dir.chdir '..'
 end
