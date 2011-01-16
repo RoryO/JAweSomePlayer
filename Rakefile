@@ -5,7 +5,7 @@ end
 task :concat => :clean do
   Dir.chdir('js')
   File.open("player.js", "w+") do |f|
-    FileList['es5-shim.js', 'utils.js', 'slider.js', 'engine.js', 'base.js'].each do |source_file|
+    FileList['swfobject.js', 'es5-shim.js', 'utils.js', 'slider.js', 'engine.js', 'base.js'].each do |source_file|
       f << File.read(source_file)
     end
   end
@@ -34,3 +34,6 @@ task :flash_debug do
   system 'mxmlc  -load-config+=base.xml -load-config+=debug.xml JAwesomePlayer.as -o jsplayer_debug.swf'
   Dir.chdir '..'
 end
+
+task :everything => [:concat, :minify, :flash_debug, :flash]
+
