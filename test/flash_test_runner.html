@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <title>Results</title>
+    <link rel="stylesheet" href="jasmine/jasmine.css" />
+  </head>
+  <body>
+    <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0" width="1" height="1" id="testSWF">
+      <param name=movie value="../flash/jsplayer_debug.swf">
+      <param name=quality value=high>
+      <param name=bgcolor value=#FFFFFF>
+      <embed href="../flash/jsplayer_debug.swf" quality=high bgcolor=#FFFFFF width="1" height="1" name="myMovieName" ALIGN="" TYPE="application/x-shockwave-flash" PLUGINSPAGE="http://www.macromedia.com/go/getflashplayer">
+    </object>
+    <script src="jasmine/jasmine.js" type="text/javascript"></script>
+    <script src="jasmine/jasmine-html.js" type="text/javascript"></script>
+
+    <script src="spec/flash_properties_spec.js" type="text/javascript"></script>
+    
+    <script type="text/javascript">
+      //we do this because, in theory, later JS engines run the entire Jasmine suite before
+      //Flash is done doing whatever it does.  Fixes Safari, still doesn't fix Firefox 4 or Chrome
+      var loadJasmine = function () {
+        window.setTimeout(function () {
+          jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+          jasmine.getEnv().execute();
+        }, 1000);
+      };
+
+      window.addEventListener('load', loadJasmine, false);
+    </script>
+
+  </body>
+ </html>
+
