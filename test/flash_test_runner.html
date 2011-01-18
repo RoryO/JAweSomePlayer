@@ -12,13 +12,14 @@
 
     <script type="text/javascript">
       var tellFlashIsReady = function () {
-        return true;
-      }
+            return true;
+          },
 
-      var flashvars = {
+          flashvars = {
             checkready: 'tellFlashIsReady',
             onready: 'flashReady',
-            allowscriptaccess: 'always'
+            allowscriptaccess: 'always',
+            url: "blank.mp3"
           }, 
           params = {},
           attributes = {
