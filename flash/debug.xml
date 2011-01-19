@@ -1,5 +1,10 @@
 <flex-config>
   <compiler>
     <debug>true</debug>
+    <verbose-stacktraces>true</verbose-stacktraces>
+    <define>
+      <name>CONFIG::debug</name>
+      <value>true</value>
+    </define>
   </compiler>
 </flex-config>

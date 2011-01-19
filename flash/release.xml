@@ -1,2 +1,9 @@
 <flex-config>
+  <compiler>
+    <debug>false</debug>
+    <define>
+      <name>CONFIG::debug</name>
+      <value>false</value>
+    </define>
+  </compiler>
 </flex-config>

@@ -17,10 +17,10 @@ package awesome {
       from.addEventListener(ev, fireEventsFor(using), params);
     }
 
-    public static function fireEventsFor(eventName:String):void {
+    public static function fireEventsFor(eventName:String, ... params):void {
       if (_eventList[eventName]) {
         for (var eventPath:String in _eventList[eventName]) {
-          ExternalInterface.call(eventPath);
+          ExternalInterface.call(eventPath, params);
         }
       }
     }

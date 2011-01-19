@@ -19,6 +19,10 @@ package {
       _sm = new SoundManager(root.loaderInfo.parameters.url);
       loaderInfo.addEventListener(Event.INIT, waitForExternalAvail);
       loaderInfo.addEventListener(Event.COMPLETE, waitForExternalAvail);
+      CONFIG::debug {
+        import ominds.Firebug;
+        Firebug.connect(root);
+      }
     }
 
     private function waitForExternalAvail(... params):void {
@@ -48,8 +52,10 @@ package {
       ExternalInterface.addCallback('volume', _sm.volume);
       ExternalInterface.addCallback('play', _sm.play);
       ExternalInterface.addCallback('pause', _sm.pause);
+      ExternalInterface.addCallback('isPlaying', _sm.isPlaying);
       ExternalInterface.addCallback('addEventlistener', EventEmitter.registerExternal);
       ExternalInterface.call(loaderInfo.parameters.onready);
     }
+
   }
 }
