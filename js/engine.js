@@ -1,14 +1,10 @@
 var jsPlayer = jsPlayer || {};
 
-jsPlayer.engine = function (engineElement, elementType, argp) {
+jsPlayer.createEngine = function (engineElement, elementType, argp) {
   "use strict";
   var outObject = {},
       params = argp || {},
       outer = this,
-      fireCallbacksFor,
-      engineReady,
-      timeChanged,
-      events = {},
       getProperty, setProperty;
 
   if (!engineElement) {
@@ -18,10 +14,6 @@ jsPlayer.engine = function (engineElement, elementType, argp) {
   if (!elementType) {
     jsPlayer.exception("ArgumentError", "Element type not provided");
   }
-
-
-  //privacy, yo
-
 
   //the reason for this nonsense is because flash ExternalInterface does not
   //allow for exposing properties, only functions.  what a fucking mess.
@@ -41,67 +33,27 @@ jsPlayer.engine = function (engineElement, elementType, argp) {
     }
   };
 
-  events.callbacks = {};
-  //more dumb shit.  flash doesn't have an external addEventListener, the best 
-  //we can hope for is a a custom event handler class interal in flash.  problem is, 
-  //flash can't find external functions by reference, only by string name
-  events.register = function (eventName, callbackName) {
-    if (elementType === 'flash') {
-      engineElement.addEventListener(eventName, callbackName);
-    } else {
-      jsPlayer.domExt.bindEvent(engineElement, eventName, events[callbackName]);
-    }
-  };
-
-  events.fireCallbacksFor = function (name, data) {
-    if (events.callbacks[name]) {
-      (function (context) {
-        for (var i = 0; i < callbacks[name].length; i += 1) {
-          callbacks[name][i].call(context, data);
-        }
-      }(this));
-    }
-  };
-
-  //internal callbacks
-  events.timeChanged = function () {
-    events.fireCallbacksFor('timeChange', engineElement.currentTime);
-  };
-
-  events.engineReady = function () {
-    events.fireCallbacksFor('engineReady');
-  };
-
-  //binding events from playback element to engine methods
-  events.register('timeupdate', "timeChanged");
-  events.register('loadeddata', "engineReady");
-
   return {
     engineElement: engineElement,
 
     bind: function (name, fun) {
-      if (typeof(fun) !== 'function') {
-        jsPlayer.exception("TypeError", "Must provide a function as a callback");
-      }
-      callbacks[name] = callbacks[name] || [];
-      callbacks[name].push(fun);
-      return this;
+      console.log('should be binding ' + name + ' on');
+      console.log(engineElement);
+      jsPlayer.eventBroker.listenFor(name, fun, engineElement);
     },
 
     play: function () {
       engineElement.play();
-      fireCallbacksFor('onPlay');
       return this;
     },
 
     pause: function () {
       engineElement.pause();
-      fireCallbacksFor('onPause');
       return this;
     },
 
     isPlaying: function () {
-      return !engineElement.paused;
+      return !getProperty('paused');
     },
 
     volume: function (n) {
@@ -113,7 +65,6 @@ jsPlayer.engine = function (engineElement, elementType, argp) {
         jsPlayer.exception("ArgumentError", "Volume input must be between 0 and 1.0");
       }
       setProperty('volume', n);
-      fireCallbacksFor('volumeChange', getProperty('volume'));
       return this;
     },
 
@@ -122,7 +73,7 @@ jsPlayer.engine = function (engineElement, elementType, argp) {
     },
 
     length: function () {
-      return engineElement.duration;
+      return getProperty('duration');
     }
   };
 };

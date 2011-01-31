@@ -54,7 +54,7 @@ jsPlayer.create = function (sourceURL, params) {
     } else {
       el.setAttribute("src", sourceURL);
       node.appendChild(el);
-      engine = jsPlayer.engine(el, "Native");
+      engine = jsPlayer.createEngine(el, "Native");
     }
   }());
 
@@ -110,14 +110,15 @@ jsPlayer.create = function (sourceURL, params) {
   }());
 
   playbackReady = function () {
+    console.log('fired playbackReady');
     if (controls.startStop) {
       jsPlayer.domExt.removeClass(controls.startStop, "startStopLoading");
       jsPlayer.domExt.addClass(controls.startStop, "playerStopped");
-      engine.bind('onPlay', function () {
+      engine.bind('play', function () {
         jsPlayer.domExt.removeClass(controls.startStop, "playerStopped");
         jsPlayer.domExt.addClass(controls.startStop, "playerStarted");
       });
-      engine.bind('onPause', function () {
+      engine.bind('pause', function () {
         jsPlayer.domExt.removeClass(controls.startStop, "playerStarted");
         jsPlayer.domExt.addClass(controls.startStop, "playerStopped");
       });
@@ -147,7 +148,7 @@ jsPlayer.create = function (sourceURL, params) {
   };
 
   //event bindings
-  engine.bind('engineReady', playbackReady);
+  engine.bind('loadeddata', playbackReady);
 
   outObject.engine = engine;
   if (controls) {

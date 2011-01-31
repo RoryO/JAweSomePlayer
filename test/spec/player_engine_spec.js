@@ -18,7 +18,7 @@ describe("Player engine", function () {
     });
 
     afterEach(function () {
-      removePlayer()
+      removePlayer();
     });
 
     it("should properly start playback", function () {
@@ -29,7 +29,7 @@ describe("Player engine", function () {
     it("should properly pause playback", function () {
       p.engine.play().pause();
       expect(p.engine.isPlaying()).toBeFalsy();
-    })
+    });
   });
 
   describe("Engine callbacks", function () {
@@ -48,7 +48,7 @@ describe("Player engine", function () {
       cb = function (volume) {
         e = "Volume is now: " + volume;
       }
-      p.engine.bind('volumeChange', cb);
+      //p.engine.bind('volumeChange', cb);
       p.engine.volume(0.5);
       expect(e).toBe("Volume is now: 0.5");
     });
@@ -58,19 +58,15 @@ describe("Player engine", function () {
       cb = function () {
         e = "Playback paused!";
       }
-      p.engine.bind('onPause', cb);
+      //p.engine.bind('onPause', cb);
       p.engine.play().pause();
       expect(e).toBe("Playback paused!");
     });
 
     it("should fire callbacks when playing", function () {
-      var e, cb;
-      cb = function () {
-        e = "Playback started!";
-      }
-      p.engine.bind('onPlay', cb);
+      //p.engine.bind('play', function() { testHelpers.expectedOutput = "Playback started!"; });
       p.engine.play();
-      expect(e).toBe('Playback started!');
+      expect(testHelpers.expectedOutput).toBe('Playback started!');
     });
 
     it("should fire callbacks when the time position changes", function () {
@@ -79,10 +75,10 @@ describe("Player engine", function () {
         console.log('In callback');
         console.log(time);
         e = "Position is now " + time;
-      }
-      p.engine.bind('timeChange', cb);
+      };
+      //p.engine.bind('timeChange', cb);
       p.engine.seekTo(1);
       expect(e).toBe('Position is now 1');
-    })
-  })
+    });
+  });
 })

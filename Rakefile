@@ -5,7 +5,8 @@ end
 task :concat => :clean do
   Dir.chdir('js')
   File.open("player.js", "w+") do |f|
-    FileList['swfobject.js', 'es5-shim.js', 'utils.js', 'slider.js', 'engine.js', 'base.js'].each do |source_file|
+    FileList['swfobject.js', 'es5-shim.js', 'utils.js', 'slider.js', 
+      'broker.js', 'engine.js', 'base.js'].each do |source_file|
       f << File.read(source_file)
     end
   end

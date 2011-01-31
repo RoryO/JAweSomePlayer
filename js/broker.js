@@ -8,24 +8,28 @@ jsPlayer.eventBroker = {
   flashEvents: {}
 };
 
-jsPlayer.eventBroker.listenFor = function (eventName, element, fun) {
+jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
   if (typeof (fun) !== "function") {
+    console.log(typeof(fun));
     jsPlayer.exception("TypeError", "Must pass a function to bind");
   }
-  if (element.nodeType.toLowerCase() === "object") {
-    if (!element.id || element.id === "") {
-      jsPlayer.exception("TypeError", "Flash element to attach events must have an ID");
+  if(!onElement) {
+    jsPlayer.exception("ArgumentError", "Element to bind to not provided");
+  }
+  if (onElement.tagName.toLowerCase() === "object") {
+    if (!onElement.id || onElement.id === "") {
+      jsPlayer.exception("TypeError", "Flash onElement to attach events must have an ID");
     }
-    jsPlayer.eventBroker.flashEvents[element.id] = jsPlayer.eventBroker.flashEvents[element.id] || {};
-    jsPlayer.eventBroker.flashEvents[element.id][eventName] = fun;
-    element.addEventListener(eventName,
-      "jsPlayer.eventBroker.flashEvents." + element.id + "." + eventName);
+    jsPlayer.eventBroker.flashEvents[onElement.id] = jsPlayer.eventBroker.flashEvents[onElement.id] || {};
+    jsPlayer.eventBroker.flashEvents[onElement.id][eventName] = fun;
+    onElement.addEventListener(eventName,
+      "jsPlayer.eventBroker.flashEvents." + onElement.id + "." + eventName);
   } else {
-    if (element.addEventListener) {
-      element.addEventListener(eventName, fun, false);
+    if (onElement.addEventListener) {
+      onElement.addEventListener(eventName, fun, false);
     } else {
       //Hi IE
-      element.attachEvent(eventName, fun);
+      onElement.attachEvent(eventName, fun);
     }
   }
 };
