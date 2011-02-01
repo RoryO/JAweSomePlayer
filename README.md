@@ -123,6 +123,9 @@ You can also register callbacks for all of the events handled by the
 engine.  Register a new event with the .bind method on the engine.
     player.engine.bind('timeChange', function (t) { console.log('Time changed to ' + t)});
 
+The available events to bind to have the same name as the HTML media
+event names listed at
+[The W3C media element page](http://www.w3.org/TR/html5/video.html#mediaevents)
 
 ENGINE CONTROL METHODS
 ===
