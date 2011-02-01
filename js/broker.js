@@ -8,6 +8,25 @@ jsPlayer.eventBroker = {
   flashEvents: {}
 };
 
+jsPlayer.eventBroker.tellFlashTrue = function () {
+  return true;
+}
+
+jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
+  if (!jsPlayer.eventBroker.flashReadyIds) {
+    jsPlayer.eventBroker.flashReadyIds = {};
+  }
+  jsPlayer.eventBroker.flashReadyIds[elementId] = true;
+}
+
+jsPlayer.eventBroker.flashIsReady = function(elementId) {
+  if (!jsPlayer.eventBroker.flashReadyIds[elementId]) {
+    setTimeout(jsPlayer.eventBroker.flashIsReady(elementId) ,200);
+  } else {
+    return true;
+  }
+}
+
 jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
   if (typeof (fun) !== "function") {
     console.log(typeof(fun));

@@ -54,7 +54,7 @@ package {
       ExternalInterface.addCallback('play', _sm.play);
       ExternalInterface.addCallback('pause', _sm.pause);
       ExternalInterface.addCallback('isPlaying', _sm.isPlaying);
-      ExternalInterface.addCallback('addEventlistener', EventEmitter.registerExternal);
+      ExternalInterface.addCallback('addEventListener', EventEmitter.registerExternal);
       ExternalInterface.call(loaderInfo.parameters.onready);
     }
 

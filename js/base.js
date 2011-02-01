@@ -76,7 +76,14 @@ jsPlayer.create = function (sourceURL, params) {
   };
 
   buildFlash = function () {
-    swfobject.create();
+    swfobject.embedSWF(params.flashLocation, elementId, "1", "1", "10.0.0", "", 
+      { checkready: jsPlayer.eventBroker.tellFlashTrue,
+        onready: jsPlayer.eventBroker.flashIsReady,
+        allowscriptaccess: 'always',
+        url: sourceURL }, {}, {id: elementId} );
+    while(!jsPlayer.eventBroker.flashIsReady) {
+      false;
+    }
   };
 
   // detect audio engine

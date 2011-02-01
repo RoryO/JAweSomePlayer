@@ -37,8 +37,6 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
     engineElement: engineElement,
 
     bind: function (name, fun) {
-      console.log('should be binding ' + name + ' on');
-      console.log(engineElement);
       jsPlayer.eventBroker.listenFor(name, fun, engineElement);
     },
 

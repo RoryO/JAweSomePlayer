@@ -2104,6 +2104,25 @@ jsPlayer.eventBroker = {
   flashEvents: {}
 };
 
+jsPlayer.eventBroker.tellFlashTrue = function () {
+  return true;
+}
+
+jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
+  if (!jsPlayer.eventBroker.flashReadyIds) {
+    jsPlayer.eventBroker.flashReadyIds = {};
+  }
+  jsPlayer.eventBroker.flashReadyIds[elementId] = true;
+}
+
+jsPlayer.eventBroker.flashIsReady = function(elementId) {
+  if (!jsPlayer.eventBroker.flashReadyIds[elementId]) {
+    setTimeout(jsPlayer.eventBroker.flashIsReady(elementId) ,200);
+  } else {
+    return true;
+  }
+}
+
 jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
   if (typeof (fun) !== "function") {
     console.log(typeof(fun));
@@ -2168,8 +2187,6 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
     engineElement: engineElement,
 
     bind: function (name, fun) {
-      console.log('should be binding ' + name + ' on');
-      console.log(engineElement);
       jsPlayer.eventBroker.listenFor(name, fun, engineElement);
     },
 
@@ -2286,7 +2303,14 @@ jsPlayer.create = function (sourceURL, params) {
   };
 
   buildFlash = function () {
-    swfobject.create();
+    swfobject.embedSWF(params.flashLocation, elementId, "1", "1", "10.0.0", "", 
+      { checkready: jsPlayer.eventBroker.tellFlashTrue,
+        onready: jsPlayer.eventBroker.flashIsReady,
+        allowscriptaccess: 'always',
+        url: sourceURL }, {}, {id: elementId} );
+    while(!jsPlayer.eventBroker.flashIsReady) {
+      false;
+    }
   };
 
   // detect audio engine
