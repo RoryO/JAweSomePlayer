@@ -2,7 +2,7 @@ task :default => [:concat, :minify] do
 
 end
 
-task :concat => :clean do
+task :concat => :clean_js do
   Dir.chdir('js')
   File.open("player.js", "w+") do |f|
     FileList['swfobject.js', 'es5-shim.js', 'utils.js', 'slider.js', 
@@ -18,10 +18,13 @@ task :minify do
   system "java -jar lib/yuicompressor.jar js/player.js > js/player-min.js"
 end
 
-task :clean do
+task :clean_flash do
+  rm_rf 'flash/*.swf'
+end
+
+task :clean_js do
   rm_rf 'js/player.js'
   rm_rf 'js/player-min.js'
-  rm_rf 'flash/*.swf'
 end
 
 task :flash do
@@ -36,5 +39,4 @@ task :flash_debug do
   Dir.chdir '..'
 end
 
-task :everything => [:concat, :minify, :flash_debug, :flash]
-
+task :everything => [:concat, :clean_flash, :minify, :flash_debug, :flash]

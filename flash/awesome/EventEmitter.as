@@ -4,6 +4,7 @@ package awesome {
 
   public class EventEmitter {
     private static var _eventList:Object = new Object();
+    public static var externalInterfaceAvabilabe:Boolean = false;
 
     public static function registerExternal(eventName:String, functionPath:Function):void {
       if (!_eventList[eventName]) {

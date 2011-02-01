@@ -89,6 +89,12 @@ Set to something truthy to use the native OS playback controls of the
 media element instead of constructing an HTML interface.  Does not work
 with Flash.
 
+mimeType: Default: autodetected
+
+Set the MIME type of the media.  This is critical when dealing with
+video files, where the container filename gives no hints as to what the
+type of file actually is.
+
 controls: 
 
 Default: {startStop: true, scrubber: true, volume: true}

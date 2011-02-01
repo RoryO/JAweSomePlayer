@@ -2211,6 +2211,27 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
 /*global fdSlider: false, swfObject: false */
 var jsPlayer = jsPlayer || {};
 
+jsPlayer.detection = {};
+
+jsPlayer.detection.audio = function(mimeType) {
+  var el = document.createElement("audio");
+  if (!el.canPlayType) {
+    return false;
+  }
+  if (el.canPlayType(mimeType) === "maybe" || el.canPlayType(mimeType) === "probably") {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+jsPlayer.buildHTMLAudio = function(rootElement, url, mimeType) {
+  var el = document.createElement("audio");
+  el.setAttribute("src", url);
+  rootElement.appendChild(el);
+  return el;
+};
+
 jsPlayer.create = function (sourceURL, params) {
   "use strict";
   var controls = {},
@@ -2219,6 +2240,8 @@ jsPlayer.create = function (sourceURL, params) {
       engine,
       elementId,
       outObject = {},
+      buildHTMLAudio,
+      buildFlash,
       defaultParams = { elementId: "jsPlayer",
                         autostart: false,
                         controls: { startStop: true, 
@@ -2233,7 +2256,10 @@ jsPlayer.create = function (sourceURL, params) {
   params = Object.merge(params, defaultParams);
   elementId = params.elementId;
 
-  mimeType = (function () {
+  if (params.mimeType) {
+    mimeType = params.mimeType;
+  } else {
+    mimeType = (function () {
     var audioTypes, retval, match;
     audioTypes = { mp3: "audio/mpeg", mpeg: "audio/mpeg", mpeg3: "audio/mpeg",
                    ogg: "audio/ogg" };
@@ -2247,26 +2273,34 @@ jsPlayer.create = function (sourceURL, params) {
       jsPlayer.exception("ArgumentError",
         "Can not find media type.  Provide a format member in the parameters object");
     }
-    return retval;
-  }());
+      return retval;
+    }());
+  }
 
-  // detect audio engine
-  (function () {
+  buildHTMLAudio = function () {
     var node = document.getElementById(elementId),
         el = document.createElement("audio");
-    if (!node) {
-      jsPlayer.exception("RuntimeError", 
-        "Unable to find player element " + elementId);
-    }
-    if (!el.canPlayType || !el.canPlayType(mimeType)) {
-      swfObject.create();
-      // build flash elements
+    el.setAttribute("src", sourceURL);
+    node.appendChild(el);
+    return el;
+  };
+
+  buildFlash = function () {
+    swfobject.create();
+  };
+
+  // detect audio engine
+  if(params.useNative) {
+    engine = jsPlayer.createEngine(buildHTMLAudio(), "Native");
+  } else if (params.useFlash) {
+    engine = jsPlayer.createEngine(buildFlash(), "Flash");
+  } else {
+    if (jsPlayer.detection.audio(mimeType)) {
+      engine = jsPlayer.createEngine(buildHTMLAudio(), "Native");
     } else {
-      el.setAttribute("src", sourceURL);
-      node.appendChild(el);
-      engine = jsPlayer.createEngine(el, "Native");
+      engine = jsPlayer.createEngine(buildFlash(), "Flash");
     }
-  }());
+  }
 
   // construct player controls
   (function () {
@@ -2285,37 +2319,38 @@ jsPlayer.create = function (sourceURL, params) {
         node.appendChild(startStopElement);
         controls.startStop = startStopElement;
       }
-      if (params.controls.volume) {
-        volumeElement = document.createElement("input");
-        volumeElement.setAttribute("type", "text");
-        volumeElement.style.display = "none";
-        volumeElement.setAttribute("value", 1);
-        volumeElement.setAttribute("class", "volumeSlider");
-        node.appendChild(volumeElement);
-        controls.volume = volumeElement;
-        fdSlider.createSlider({
-          inp: volumeElement,
-          step: 0.01,
-          maxStep: 0.1,
-          min: 0,
-          max: 1,
-          vertical: true,
-          callbacks: {change: [
-            function (e) {
-              outObject.engine.volume(e.value);
-            }
-          ]}
-        });
-      }
-      if (params.controls.scrubber) {
-        scrubElement = document.createElement("input");
-        scrubElement.setAttribute("type", "text");
-        scrubElement.style.display = "none";
-        scrubElement.setAttribute("value", 0);
-        scrubElement.setAttribute("class", "scrubber");
-        node.appendChild(scrubElement);
-        controls.scrubber = scrubElement;
-      }
+      //forego this for now
+      //if (params.controls.volume) {
+        //volumeElement = document.createElement("input");
+        //volumeElement.setAttribute("type", "text");
+        //volumeElement.style.display = "none";
+        //volumeElement.setAttribute("value", 1);
+        //volumeElement.setAttribute("class", "volumeSlider");
+        //node.appendChild(volumeElement);
+        //controls.volume = volumeElement;
+        //fdSlider.createSlider({
+          //inp: volumeElement,
+          //step: 0.01,
+          //maxStep: 0.1,
+          //min: 0,
+          //max: 1,
+          //vertical: true,
+          //callbacks: {change: [
+            //function (e) {
+              //outObject.engine.volume(e.value);
+            //}
+          //]}
+        //});
+      //}
+      //if (params.controls.scrubber) {
+        //scrubElement = document.createElement("input");
+        //scrubElement.setAttribute("type", "text");
+        //scrubElement.style.display = "none";
+        //scrubElement.setAttribute("value", 0);
+        //scrubElement.setAttribute("class", "scrubber");
+        //node.appendChild(scrubElement);
+        //controls.scrubber = scrubElement;
+      //}
     }
   }());
 
@@ -2366,3 +2401,4 @@ jsPlayer.create = function (sourceURL, params) {
   }
   return outObject;
 };
+
