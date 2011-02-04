@@ -20,8 +20,8 @@ package {
       loaderInfo.addEventListener(Event.INIT, waitForExternalAvail);
       loaderInfo.addEventListener(Event.COMPLETE, waitForExternalAvail);
       CONFIG::debug {
-        import ominds.Firebug;
-        Firebug.connect(root);
+        //import ominds.Firebug;
+        //Firebug.connect(root);
       }
     }
 

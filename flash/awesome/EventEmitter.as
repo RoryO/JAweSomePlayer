@@ -4,6 +4,12 @@ package awesome {
 
   public class EventEmitter {
     private static var _eventList:Object = new Object();
+    private static var _eventTranslators:Object = {
+      OPEN: 'loadeddata',
+      PROGRESS: '',
+      COMPLETE: ''
+    };
+
     public static var _externalInterfaceIsAvabilabe:Boolean = false;
 
     public static function get externalInterfaceIsAvabilabe():Boolean {
@@ -21,9 +27,8 @@ package awesome {
       _eventList[eventName].push(functionPath);
     }
 
-    public static function captureInternalEvent(from:*, ev:Event,
-        using:String, ... params):void {
-      from.addEventListener(ev, fireEventsFor(using), params);
+    public static function captureFlashEvent(e:Event):void {
+      EventEmitter.fireEventsFor(e.type);
     }
 
     public static function fireEventsFor(eventName:String, ... params):void {

@@ -4,6 +4,7 @@ package awesome {
     import flash.media.SoundChannel;
     import flash.media.SoundTransform;
     import flash.net.URLRequest;
+    import flash.events.*;
 
     private var _volume:Number = 1;
     private var _sound:Sound = new Sound();
@@ -14,20 +15,25 @@ package awesome {
 
     public function SoundManager(locationUrl:String, autostart:Boolean = false) {
       _sound.load(new URLRequest(locationUrl));
-      if(autostart) {
-        this.play();
-      }
+      _sound.addEventListener(Event.OPEN,
+          EventEmitter.captureFlashEvent);
+      //_sound.addEventListener(Event.PROGRESS,
+          //EventEmitter.captureFlashEvent);
+      _sound.addEventListener(Event.COMPLETE,
+          EventEmitter.captureFlashEvent);
     }
 
     public function play():void {
       _channel = _sound.play(_soundPosition);
       _isPlaying = true;
+      EventEmitter.fireEventsFor("play");
     }
 
     public function pause():void {
       _soundPosition = _channel.position;
       _channel.stop();
       _isPlaying = false;
+      EventEmitter.fireEventsFor("pause");
     }
 
     public function isPlaying():Boolean {
@@ -43,6 +49,7 @@ package awesome {
           if (_channel) {
             _channel.soundTransform = _transform;
           }
+          EventEmitter.fireEventsFor("volumechange");
         }
       } else { return _transform.volume; }
     }
