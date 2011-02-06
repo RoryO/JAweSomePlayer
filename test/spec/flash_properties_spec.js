@@ -1,5 +1,5 @@
 describe("Flash external properties", function () {
-
+  
   describe("exposed controls", function () {
 
     it("should have a default volume of 1", function () {

@@ -9,6 +9,7 @@
     <script src="jasmine/jasmine.js" type="text/javascript" charset="utf-8"></script>
     <script src="jasmine/jasmine-html.js" type="text/javascript" charset="utf-8"></script>
     <script src="spec/flash_properties_spec.js" type="text/javascript" charset="utf-8"></script>
+    <script src="spec/flash_callbacks_spec.js" type="text/javascript" charset="utf-8"></script>
 
     <script type="text/javascript">
       var tellFlashIsReady = function () {
@@ -23,6 +24,9 @@
           params = {},
           attributes = {
             id: 'testSWF'
+          },
+          testHelpers = {
+            expectedOutput: ""
           };
 
       swfobject.embedSWF("../flash/jsplayer_debug.swf", 

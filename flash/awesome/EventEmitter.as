@@ -20,11 +20,15 @@ package awesome {
       _externalInterfaceIsAvabilabe = n;
     }
 
-    public static function registerExternal(eventName:String, functionPath:Function):void {
+    public static function registerExternal(eventName:String, functionPath:String):void {
       if (!_eventList[eventName]) {
         _eventList[eventName] = new Array();
       }
       _eventList[eventName].push(functionPath);
+      CONFIG::debug {
+        ExternalInterface.call('console.log', 'Added a new function:');
+        ExternalInterface.call('console.log', _eventList);
+      }
     }
 
     public static function captureFlashEvent(e:Event):void {
@@ -32,11 +36,20 @@ package awesome {
     }
 
     public static function fireEventsFor(eventName:String, ... params):void {
-      if (_eventList[eventName]) {
-        for (var eventPath:String in _eventList[eventName]) {
-          ExternalInterface.call(eventPath, params);
-        }
+      CONFIG::debug {
+        ExternalInterface.call('console.log', 'Firing events for ' + eventName);
+        ExternalInterface.call('console.log', _eventList[eventName]);
       }
+      if (_eventList[eventName]) {
+        _eventList[eventName].forEach(fireEvent);
+      }
+    }
+
+    private static function fireEvent(eventPath:String, ... params):void {
+      CONFIG::debug {
+        ExternalInterface.call('console.log', 'Should be firing ' + eventPath);
+      }
+      ExternalInterface.call(eventPath);
     }
   }
 }
