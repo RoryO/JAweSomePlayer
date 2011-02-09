@@ -8,39 +8,37 @@
     <script src="../js/swfobject.js" type="text/javascript" charset="utf-8"></script>
     <script src="jasmine/jasmine.js" type="text/javascript" charset="utf-8"></script>
     <script src="jasmine/jasmine-html.js" type="text/javascript" charset="utf-8"></script>
+
     <script src="spec/flash_properties_spec.js" type="text/javascript" charset="utf-8"></script>
-    <script src="spec/flash_callbacks_spec.js" type="text/javascript" charset="utf-8"></script>
-
     <script type="text/javascript">
-      var tellFlashIsReady = function () {
-            return true;
-          },
-          flashvars = {
-            checkready: 'tellFlashIsReady',
-            onready: 'flashReady',
+      var testHelpers =  {
+        tellFlashTrue: function () {
+          return true;
+        },
+        flashIsReady: function () {
+          jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+          jasmine.getEnv().execute();
+        },
+        loadFlash: function () {
+          swfobject.embedSWF("../flash/jsplayer_debug.swf", 'testSWF', "1", "1", "9.0.0", "", 
+          { checkready: testHelpers.tellFlashTrue,
+            onready: testHelpers.flashIsReady,
             allowscriptaccess: 'always',
-            url: "blank.mp3"
-          },
-          params = {},
-          attributes = {
-            id: 'testSWF'
-          },
-          testHelpers = {
-            expectedOutput: ""
-          };
-
-      swfobject.embedSWF("../flash/jsplayer_debug.swf", 
-        "testSWF", "1", "1", "10.0.0", "", flashvars, params, attributes);
-      jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
-      //We can't run the test suites until Flash is done doing whatever the hell it does
-      //this is called on a bunch of crap we had to do to ensure that FLash is done
-      var flashReady = function () {
-        jasmine.getEnv().execute();
+            url: 'blank.mp3'}, {}, {id: 'testSWF'} );
+        },
+        expectedOutput: ""
       };
+
+      if (window.addEventListener) {
+        window.addEventListener('load', testHelpers.loadFlash, false);
+      } else {
+        window.attachEvent('load', testHelpers.loadFlash);
+      }
     </script>
 
   </head>
   <body>
-    <div id="testSWF"></div>
+    <div id="testSWF">
+    </div>
   </body>
  </html>

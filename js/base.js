@@ -76,7 +76,7 @@ jsPlayer.create = function (sourceURL, params) {
   };
 
   buildFlash = function () {
-    swfobject.embedSWF(params.flashLocation, elementId, "1", "1", "10.0.0", "", 
+    swfobject.embedSWF(params.flashLocation, elementId, "1", "1", "9.0.0", "", 
       { checkready: jsPlayer.eventBroker.tellFlashTrue,
         onready: jsPlayer.eventBroker.flashIsReady,
         allowscriptaccess: 'always',
