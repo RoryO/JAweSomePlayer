@@ -8,11 +8,11 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
       getProperty, setProperty;
 
   if (!engineElement) {
-    jsPlayer.exception("ArgumentError", "Engine element not provided");
+    throw new Error("Engine element not provided");
   }
 
   if (!elementType) {
-    jsPlayer.exception("ArgumentError", "Element type not provided");
+    throw new Error("Element type not provided");
   }
 
   //the reason for this nonsense is because flash ExternalInterface does not
@@ -60,7 +60,7 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
         return engineElement.volume;
       }
       if (n < 0 || n > 1) {
-        jsPlayer.exception("ArgumentError", "Volume input must be between 0 and 1.0");
+        throw new Error("Volume input must be between 0 and 1.0");
       }
       setProperty('volume', n);
       return this;

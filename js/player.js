@@ -845,9 +845,7 @@ if (!Array.prototype.cycle) {
   };
 }
 
-if(!jsPlayer) {
-  var jsPlayer = {};
-}
+var jsPlayer = jsPlayer || {};
 
 if (!jsPlayer.domExt) {
   jsPlayer.domExt = {};
@@ -922,15 +920,6 @@ if (!Object.merge) {
     return retval;
   }
 }
-
-jsPlayer.exception = function (type, m) {
-  var ex = new Error();
-  ex.name = type;
-  //for Firefox
-  ex.value = type;
-  ex.message = m;
-  throw (ex);
-};
 /*
 * Unobtrusive Slider Control 
 * http://www.frequency-decoder.com/
@@ -2126,14 +2115,14 @@ jsPlayer.eventBroker.flashIsReady = function(elementId) {
 jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
   if (typeof (fun) !== "function") {
     console.log(typeof(fun));
-    jsPlayer.exception("TypeError", "Must pass a function to bind");
+    throw new Error("Must pass a function to bind");
   }
   if(!onElement) {
-    jsPlayer.exception("ArgumentError", "Element to bind to not provided");
+    throw new Error("Element to bind to not provided");
   }
   if (onElement.tagName.toLowerCase() === "object") {
     if (!onElement.id || onElement.id === "") {
-      jsPlayer.exception("TypeError", "Flash onElement to attach events must have an ID");
+      throw new Error("Flash onElement to attach events must have an ID");
     }
     jsPlayer.eventBroker.flashEvents[onElement.id] = jsPlayer.eventBroker.flashEvents[onElement.id] || {};
     jsPlayer.eventBroker.flashEvents[onElement.id][eventName] = fun;
@@ -2158,11 +2147,11 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
       getProperty, setProperty;
 
   if (!engineElement) {
-    jsPlayer.exception("ArgumentError", "Engine element not provided");
+    throw new Error("Engine element not provided");
   }
 
   if (!elementType) {
-    jsPlayer.exception("ArgumentError", "Element type not provided");
+    throw new Error("Element type not provided");
   }
 
   //the reason for this nonsense is because flash ExternalInterface does not
@@ -2210,7 +2199,7 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
         return engineElement.volume;
       }
       if (n < 0 || n > 1) {
-        jsPlayer.exception("ArgumentError", "Volume input must be between 0 and 1.0");
+        throw new Error("Volume input must be between 0 and 1.0");
       }
       setProperty('volume', n);
       return this;
@@ -2267,7 +2256,7 @@ jsPlayer.create = function (sourceURL, params) {
       };
 
   if (!sourceURL) {
-    jsPlayer.exception("ArgumentError", "URL of audio not provided");
+    throw new Error("URL of media not provided");
   }
 
   params = Object.merge(params, defaultParams);
@@ -2287,8 +2276,7 @@ jsPlayer.create = function (sourceURL, params) {
     } else if (params.format && audioTypes[params.format]) {
       retval = audioTypes[params.format];
     } else {
-      jsPlayer.exception("ArgumentError",
-        "Can not find media type.  Provide a format member in the parameters object");
+      throw new Error("Can not find media type.  Provide a format member in the parameters object");
     }
       return retval;
     }());
@@ -2308,9 +2296,10 @@ jsPlayer.create = function (sourceURL, params) {
         onready: jsPlayer.eventBroker.flashIsReady,
         allowscriptaccess: 'always',
         url: sourceURL }, {}, {id: elementId} );
-    while(!jsPlayer.eventBroker.flashIsReady) {
-      false;
-    }
+    //while(!jsPlayer.eventBroker.flashIsReady) {
+      //false;
+    //}
+    return document.getElementById(elementId);
   };
 
   // detect audio engine

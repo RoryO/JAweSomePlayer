@@ -40,7 +40,7 @@ jsPlayer.create = function (sourceURL, params) {
       };
 
   if (!sourceURL) {
-    jsPlayer.exception("ArgumentError", "URL of audio not provided");
+    throw new Error("URL of media not provided");
   }
 
   params = Object.merge(params, defaultParams);
@@ -60,8 +60,7 @@ jsPlayer.create = function (sourceURL, params) {
     } else if (params.format && audioTypes[params.format]) {
       retval = audioTypes[params.format];
     } else {
-      jsPlayer.exception("ArgumentError",
-        "Can not find media type.  Provide a format member in the parameters object");
+      throw new Error("Can not find media type.  Provide a format member in the parameters object");
     }
       return retval;
     }());
@@ -81,9 +80,10 @@ jsPlayer.create = function (sourceURL, params) {
         onready: jsPlayer.eventBroker.flashIsReady,
         allowscriptaccess: 'always',
         url: sourceURL }, {}, {id: elementId} );
-    while(!jsPlayer.eventBroker.flashIsReady) {
-      false;
-    }
+    //while(!jsPlayer.eventBroker.flashIsReady) {
+      //false;
+    //}
+    return document.getElementById(elementId);
   };
 
   // detect audio engine

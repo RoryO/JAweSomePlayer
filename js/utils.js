@@ -15,9 +15,7 @@ if (!Array.prototype.cycle) {
   };
 }
 
-if(!jsPlayer) {
-  var jsPlayer = {};
-}
+var jsPlayer = jsPlayer || {};
 
 if (!jsPlayer.domExt) {
   jsPlayer.domExt = {};
@@ -92,12 +90,3 @@ if (!Object.merge) {
     return retval;
   }
 }
-
-jsPlayer.exception = function (type, m) {
-  var ex = new Error();
-  ex.name = type;
-  //for Firefox
-  ex.value = type;
-  ex.message = m;
-  throw (ex);
-};

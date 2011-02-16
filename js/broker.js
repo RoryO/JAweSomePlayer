@@ -30,14 +30,14 @@ jsPlayer.eventBroker.flashIsReady = function(elementId) {
 jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
   if (typeof (fun) !== "function") {
     console.log(typeof(fun));
-    jsPlayer.exception("TypeError", "Must pass a function to bind");
+    throw new Error("Must pass a function to bind");
   }
   if(!onElement) {
-    jsPlayer.exception("ArgumentError", "Element to bind to not provided");
+    throw new Error("Element to bind to not provided");
   }
   if (onElement.tagName.toLowerCase() === "object") {
     if (!onElement.id || onElement.id === "") {
-      jsPlayer.exception("TypeError", "Flash onElement to attach events must have an ID");
+      throw new Error("Flash onElement to attach events must have an ID");
     }
     jsPlayer.eventBroker.flashEvents[onElement.id] = jsPlayer.eventBroker.flashEvents[onElement.id] || {};
     jsPlayer.eventBroker.flashEvents[onElement.id][eventName] = fun;
