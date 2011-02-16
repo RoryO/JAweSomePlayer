@@ -2,8 +2,6 @@ describe("Flash engine", function () {
   var body = document.getElementsByTagName('body')[0],
       engine;
 
-  engineElement.setAttribute('id', 'testSWF');
-  body.appendChild(engineElement);
   swfobject.embedSWF("../flash/jsplayer_debug.swf", 'testSWF', "1", "1", "9.0.0", "", 
       { checkready: testHelpers.tellFlashTrue,
         onready: testHelpers.flashIsReady,

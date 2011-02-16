@@ -95,6 +95,12 @@ Set the MIME type of the media.  This is critical when dealing with
 video files, where the container filename gives no hints as to what the
 type of file actually is.
 
+codecString: Default: undefined
+Sometimes the MIME type doesn't give enough information.  For instance,
+'video/mpeg' doesn't say what the mpeg file was encoded with.  Provide
+this if the browser can't figure out how to play the file with just a
+MIME string.  See [RFC 4281](http://tools.ietf.org/html/rfc4281).
+
 controls: 
 
 Default: {startStop: true, scrubber: true, volume: true}

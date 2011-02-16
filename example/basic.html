@@ -9,7 +9,6 @@
       .startStop {
         width: 100px;
         height: 100px;
-        float: left;
       }
       .playerStopped {
         background-color: red;
@@ -20,12 +19,24 @@
       .startStopLoading {
         background-color: orange;
       }
+      .container {
+        display: block;
+      }
     </style>
   </head>
   <body>
-    <div id="nativePlayer">
+    <div class="container">
+      <h1>Native Player</h1>
+      <div id="nativePlayer">
+      </div>
     </div>
-    <div id="flashPlayer">
+
+    <br />
+
+    <div class="container">
+      <h1>Flash Player</h1>
+      <div id="flashPlayer">
+      </div>
     </div>
 
     <script src="../js/player.js" type="text/javascript" charset="utf-8"></script>

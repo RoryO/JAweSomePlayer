@@ -19,14 +19,26 @@
     </style>
   </head>
   <body>
-    <div id="studioPlayer">
+
+    <div class="container">
+      <h1>Streaming Native</h1>
+      <div id="studioNative">
+      </div>
     </div>
+    <div class="container">
+      <h1>Streaming Flash</h1>
+      <div id="studioFlash">
+      </div>
+    </div>
+
     <script src="../js/player.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
       var pl;
       function init() {
-        pl = jsPlayer("http://krui.student-services.uiowa.edu:8103/listen", 
-                      {elementId: "studioPlayer", format: "mp3"});
+        studioNative = jsPlayer.create("http://krui.student-services.uiowa.edu:8103/listen", 
+            {elementId: "studioNative", mimeType: "audio/mpeg", useNative: true});
+        studioFlash = jsPlayer.create("http://krui.student-services.uiowa.edu:8103/listen",
+            {elementId: "studioFlash", mimeType: "audio/mpeg", useFlash: true});
       };
       window.addEventListener('load', init, false);
     </script>

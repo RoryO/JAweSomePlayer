@@ -25,4 +25,26 @@ describe("Flash external properties", function () {
       expect(flash.isPlaying()).toBeFalsy();
     });
   });
+
+  describe("external callbacks", function () {
+    it("should fire a callback on volume change", function () {
+      var flash = document.getElementById("testSWF");
+      testHelpers.volumeChange = function () {
+        testHelpers.expectedOutput = "Volume has changed";
+      };
+      flash.addEventListener('volumechange', 'testHelpers.volumeChange');
+      flash.volume(1.0);
+      expect(testHelpers.expectedOutput).toBe("Volume has changed");
+    });
+
+    xit("should fire a callback when the data has loaded", function () {
+      var flash = document.getElementById("testSWF");
+      testHelpers.loadDataCallback = function () {
+        testHelpers.expectedOutput = "Flash has loaded data";
+      };
+      flash.addEventListener('loadeddata', 'testHelpers.loadDataCallback');
+      flash.load();
+      expect(testHelpers.expectedOutput).toBe("Flash has loaded data");
+    });
+  });
 });
