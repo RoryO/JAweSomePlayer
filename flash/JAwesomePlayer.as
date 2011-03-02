@@ -44,7 +44,7 @@ package {
         loaderInfo.removeEventListener(Event.INIT, waitForExternalAvail);
         loaderInfo.removeEventListener(Event.COMPLETE, waitForExternalAvail);
         ExternalInterface.marshallExceptions = true;
-        EventEmitter.externalInterfaceIsAvabilabe = true;
+        EventEmitter.externalInterfaceIsAvailable = true;
         loadExternalCallbacks();
       }
     }
@@ -53,9 +53,9 @@ package {
       ExternalInterface.addCallback('volume', _sm.volume);
       ExternalInterface.addCallback('play', _sm.play);
       ExternalInterface.addCallback('pause', _sm.pause);
-      ExternalInterface.addCallback('isPlaying', _sm.isPlaying);
+      ExternalInterface.addCallback('paused', _sm.isPaused);
       ExternalInterface.addCallback('addEventListener', EventEmitter.registerExternal);
-      ExternalInterface.call(loaderInfo.parameters.onready);
+      ExternalInterface.call(loaderInfo.parameters.onready, ExternalInterface.objectID);
     }
 
   }

@@ -40,6 +40,10 @@ package awesome {
       return _isPlaying;
     }
 
+    public function isPaused():Boolean {
+      return !_isPlaying;
+    }
+
     public function volume(n:Number = undefined):* {
       if (n) {
         if (n > 1.0 || n < 0.0) {

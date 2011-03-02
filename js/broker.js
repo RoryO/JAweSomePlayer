@@ -12,10 +12,12 @@ jsPlayer.eventBroker.tellFlashTrue = function () {
   return true;
 };
 
+jsPlayer.eventBroker.flashReadyIds = {};
+
 jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
-  if (!jsPlayer.eventBroker.flashReadyIds) {
-    jsPlayer.eventBroker.flashReadyIds = {};
-  }
+  if(!elementId) {
+    throw new Error("No element ID in flashIsReportingReady");
+  } 
   jsPlayer.eventBroker.flashReadyIds[elementId] = true;
 };
 

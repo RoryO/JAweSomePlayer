@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <title>Results</title>
+    <link rel="stylesheet" href="jasmine/jasmine.css" />
+    <script src="../js/swfobject.js" type="text/javascript" charset="utf-8"></script>
+    <script src="jasmine/jasmine.js" type="text/javascript" charset="utf-8"></script>
+    <script src="jasmine/jasmine-html.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="spec/flash_properties_spec.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+      var testHelpers =  {
+        tellFlashTrue: function () {
+          console.log('telling flash true');
+          return true;
+        },
+        flashIsReady: function () {
+          console.log('flash is reporting ready');
+          jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+          jasmine.getEnv().execute();
+        },
+        loadFlash: function () {
+          swfobject.embedSWF("../flash/jsplayer_debug.swf", 'testSWF', "1", "1", "9.0.0", "", 
+          { checkready: testHelpers.tellFlashTrue,
+            onready: testHelpers.flashIsReady,
+            allowscriptaccess: 'always',
+            url: 'blank.mp3'}, {}, {id: 'testSWF'} );
+        },
+        expectedOutput: ""
+      };
+
+      if (window.addEventListener) {
+        window.addEventListener('load', testHelpers.loadFlash, false);
+      } else {
+        window.attachEvent('load', testHelpers.loadFlash);
+      }
+    </script>
+
+  </head>
+  <body>
+    <div id="testSWF">
+    </div>
+  </body>
+ </html>

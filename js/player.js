@@ -2097,10 +2097,12 @@ jsPlayer.eventBroker.tellFlashTrue = function () {
   return true;
 };
 
+jsPlayer.eventBroker.flashReadyIds = {};
+
 jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
-  if (!jsPlayer.eventBroker.flashReadyIds) {
-    jsPlayer.eventBroker.flashReadyIds = {};
-  }
+  if(!elementId) {
+    throw new Error("No element ID in flashIsReportingReady");
+  } 
   jsPlayer.eventBroker.flashReadyIds[elementId] = true;
 };
 
@@ -2141,10 +2143,12 @@ var jsPlayer = jsPlayer || {};
 
 jsPlayer.createEngine = function (engineElement, elementType, argp) {
   "use strict";
+
   var outObject = {},
       params = argp || {},
       outer = this,
-      getProperty, setProperty;
+      getProperty, setProperty,
+      isFlashElement;
 
   if (!engineElement) {
     throw new Error("Engine element not provided");
@@ -2152,12 +2156,16 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
 
   if (!elementType) {
     throw new Error("Element type not provided");
+  } else {
+    if (elementType.toLowerCase() === "flash") {
+      isFlashElement = true
+    }
   }
 
   //the reason for this nonsense is because flash ExternalInterface does not
   //allow for exposing properties, only functions.  what a fucking mess.
   getProperty = function (p) {
-    if (elementType === 'flash') {
+    if (isFlashElement) {
       return engineElement[p]();
     } else {
       return engineElement[p];
@@ -2165,7 +2173,7 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
   };
 
   setProperty = function (p, n) {
-    if (elementType === 'flash') {
+    if (isFlashElement) {
       engineElement[p](n);
     } else {
       engineElement[p] = n;
@@ -2181,12 +2189,10 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
 
     play: function () {
       engineElement.play();
-      return this;
     },
 
     pause: function () {
       engineElement.pause();
-      return this;
     },
 
     isPlaying: function () {
@@ -2196,13 +2202,14 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
     volume: function (n) {
       n = Number(n);
       if (isNaN(n)) {
-        return engineElement.volume;
+        return getProperty('volume');
+      } else {
+        if (n < 0 || n > 1) {
+          throw new Error("Volume input must be between 0 and 1.0");
+        }
+        setProperty('volume', n);
+        return this;
       }
-      if (n < 0 || n > 1) {
-        throw new Error("Volume input must be between 0 and 1.0");
-      }
-      setProperty('volume', n);
-      return this;
     },
 
     seekTo: function (n) {
@@ -2231,12 +2238,12 @@ jsPlayer.detection.audio = function(mimeType) {
   }
 };
 
-jsPlayer.buildHTMLAudio = function(rootElement, url, mimeType) {
-  var el = document.createElement("audio");
-  el.setAttribute("src", url);
-  rootElement.appendChild(el);
-  return el;
-};
+//jsPlayer.buildHTMLAudio = function(rootElement, url, mimeType) {
+  //var el = document.createElement("audio");
+  //el.setAttribute("src", url);
+  //rootElement.appendChild(el);
+  //return el;
+//};
 
 jsPlayer.create = function (sourceURL, params) {
   "use strict";
@@ -2250,6 +2257,7 @@ jsPlayer.create = function (sourceURL, params) {
       buildFlash,
       defaultParams = { elementId: "jsPlayer",
                         autostart: false,
+                        flashLocation: "jsplayer.swf",
                         controls: { startStop: true, 
                                     scrubber: true, 
                                     volume: true }
@@ -2292,10 +2300,10 @@ jsPlayer.create = function (sourceURL, params) {
 
   buildFlash = function () {
     swfobject.embedSWF(params.flashLocation, elementId, "1", "1", "9.0.0", "", 
-      { checkready: jsPlayer.eventBroker.tellFlashTrue,
-        onready: jsPlayer.eventBroker.flashIsReady,
+      { checkready: 'jsPlayer.eventBroker.tellFlashTrue',
+        onready: 'jsPlayer.eventBroker.flashIsReportingReady',
         allowscriptaccess: 'always',
-        url: sourceURL }, {}, {id: elementId} );
+        url: sourceURL }, {}, {id: elementId, name: elementId} );
     //while(!jsPlayer.eventBroker.flashIsReady) {
       //false;
     //}
@@ -2368,7 +2376,6 @@ jsPlayer.create = function (sourceURL, params) {
   }());
 
   playbackReady = function () {
-    console.log('fired playbackReady');
     if (controls.startStop) {
       jsPlayer.domExt.removeClass(controls.startStop, "startStopLoading");
       jsPlayer.domExt.addClass(controls.startStop, "playerStopped");
@@ -2389,16 +2396,16 @@ jsPlayer.create = function (sourceURL, params) {
       });
     }
 
-    if (controls.scrubber) {
-      fdSlider.destroySlider(controls.scrubber);
-      fdSlider.createSlider({
-        inp: controls.scrubber,
-        step: 1,
-        maxStep: 1,
-        min: 0,
-        max: engine.length()
-      });
-    }
+    //if (controls.scrubber) {
+      //fdSlider.destroySlider(controls.scrubber);
+      //fdSlider.createSlider({
+        //inp: controls.scrubber,
+        //step: 1,
+        //maxStep: 1,
+        //min: 0,
+        //max: engine.length()
+      //});
+    //}
 
     if (params.autostart) {
       engine.play();

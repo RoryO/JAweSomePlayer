@@ -2,10 +2,12 @@ var jsPlayer = jsPlayer || {};
 
 jsPlayer.createEngine = function (engineElement, elementType, argp) {
   "use strict";
+
   var outObject = {},
       params = argp || {},
       outer = this,
-      getProperty, setProperty;
+      getProperty, setProperty,
+      isFlashElement;
 
   if (!engineElement) {
     throw new Error("Engine element not provided");
@@ -13,12 +15,16 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
 
   if (!elementType) {
     throw new Error("Element type not provided");
+  } else {
+    if (elementType.toLowerCase() === "flash") {
+      isFlashElement = true
+    }
   }
 
   //the reason for this nonsense is because flash ExternalInterface does not
   //allow for exposing properties, only functions.  what a fucking mess.
   getProperty = function (p) {
-    if (elementType === 'flash') {
+    if (isFlashElement) {
       return engineElement[p]();
     } else {
       return engineElement[p];
@@ -26,7 +32,7 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
   };
 
   setProperty = function (p, n) {
-    if (elementType === 'flash') {
+    if (isFlashElement) {
       engineElement[p](n);
     } else {
       engineElement[p] = n;
@@ -42,12 +48,10 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
 
     play: function () {
       engineElement.play();
-      return this;
     },
 
     pause: function () {
       engineElement.pause();
-      return this;
     },
 
     isPlaying: function () {
@@ -57,13 +61,14 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
     volume: function (n) {
       n = Number(n);
       if (isNaN(n)) {
-        return engineElement.volume;
+        return getProperty('volume');
+      } else {
+        if (n < 0 || n > 1) {
+          throw new Error("Volume input must be between 0 and 1.0");
+        }
+        setProperty('volume', n);
+        return this;
       }
-      if (n < 0 || n > 1) {
-        throw new Error("Volume input must be between 0 and 1.0");
-      }
-      setProperty('volume', n);
-      return this;
     },
 
     seekTo: function (n) {

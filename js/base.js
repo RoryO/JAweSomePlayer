@@ -15,12 +15,12 @@ jsPlayer.detection.audio = function(mimeType) {
   }
 };
 
-jsPlayer.buildHTMLAudio = function(rootElement, url, mimeType) {
-  var el = document.createElement("audio");
-  el.setAttribute("src", url);
-  rootElement.appendChild(el);
-  return el;
-};
+//jsPlayer.buildHTMLAudio = function(rootElement, url, mimeType) {
+  //var el = document.createElement("audio");
+  //el.setAttribute("src", url);
+  //rootElement.appendChild(el);
+  //return el;
+//};
 
 jsPlayer.create = function (sourceURL, params) {
   "use strict";
@@ -34,6 +34,7 @@ jsPlayer.create = function (sourceURL, params) {
       buildFlash,
       defaultParams = { elementId: "jsPlayer",
                         autostart: false,
+                        flashLocation: "jsplayer.swf",
                         controls: { startStop: true, 
                                     scrubber: true, 
                                     volume: true }
@@ -76,10 +77,10 @@ jsPlayer.create = function (sourceURL, params) {
 
   buildFlash = function () {
     swfobject.embedSWF(params.flashLocation, elementId, "1", "1", "9.0.0", "", 
-      { checkready: jsPlayer.eventBroker.tellFlashTrue,
-        onready: jsPlayer.eventBroker.flashIsReady,
+      { checkready: 'jsPlayer.eventBroker.tellFlashTrue',
+        onready: 'jsPlayer.eventBroker.flashIsReportingReady',
         allowscriptaccess: 'always',
-        url: sourceURL }, {}, {id: elementId} );
+        url: sourceURL }, {}, {id: elementId, name: elementId} );
     //while(!jsPlayer.eventBroker.flashIsReady) {
       //false;
     //}
@@ -152,7 +153,6 @@ jsPlayer.create = function (sourceURL, params) {
   }());
 
   playbackReady = function () {
-    console.log('fired playbackReady');
     if (controls.startStop) {
       jsPlayer.domExt.removeClass(controls.startStop, "startStopLoading");
       jsPlayer.domExt.addClass(controls.startStop, "playerStopped");
@@ -173,16 +173,16 @@ jsPlayer.create = function (sourceURL, params) {
       });
     }
 
-    if (controls.scrubber) {
-      fdSlider.destroySlider(controls.scrubber);
-      fdSlider.createSlider({
-        inp: controls.scrubber,
-        step: 1,
-        maxStep: 1,
-        min: 0,
-        max: engine.length()
-      });
-    }
+    //if (controls.scrubber) {
+      //fdSlider.destroySlider(controls.scrubber);
+      //fdSlider.createSlider({
+        //inp: controls.scrubber,
+        //step: 1,
+        //maxStep: 1,
+        //min: 0,
+        //max: engine.length()
+      //});
+    //}
 
     if (params.autostart) {
       engine.play();

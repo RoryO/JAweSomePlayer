@@ -44,7 +44,9 @@
     var playerNative, playerFlash;
     function init() {
       playerNative = jsPlayer.create("libertango.mp3", {elementId: "nativePlayer", useNative: true});
-      playerFlash = jsPlayer.create("libertango.mp3", {elementId: "flashPlayer", useFlash: true});
+      playerFlash = jsPlayer.create("libertango.mp3", {elementId:
+          "flashPlayer", useFlash: true, flashLocation:
+          "../flash/jsplayer.swf"});
     }
     window.addEventListener('load', init, false);
     </script>

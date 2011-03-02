@@ -16,13 +16,13 @@ describe("Flash external properties", function () {
     it("should start playback properly", function () {
       var flash = document.getElementById("testSWF");
       flash.play();
-      expect(flash.isPlaying()).toBeTruthy();
+      expect(flash.paused()).toBeFalsy();
     });
 
     it("should properly pause playback", function () {
       var flash = document.getElementById("testSWF");
       flash.pause();
-      expect(flash.isPlaying()).toBeFalsy();
+      expect(flash.paused()).toBeTruthy();
     });
   });
 
