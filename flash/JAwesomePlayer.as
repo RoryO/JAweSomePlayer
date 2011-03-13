@@ -43,7 +43,7 @@ package {
       } else {
         loaderInfo.removeEventListener(Event.INIT, waitForExternalAvail);
         loaderInfo.removeEventListener(Event.COMPLETE, waitForExternalAvail);
-        ExternalInterface.marshallExceptions = true;
+        //ExternalInterface.marshallExceptions = true;
         EventEmitter.externalInterfaceIsAvailable = true;
         loadExternalCallbacks();
       }

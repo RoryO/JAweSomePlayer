@@ -25,8 +25,16 @@
             jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
             jasmine.getEnv().execute();
           };
-      window.addEventListener('load', init, false);
+      if (window.addEventListener) {
+        window.addEventListener('load', init, false);
+      }
     </script>
+    <!--[if lte IE 8]>
+    <script defer>
+      testHelpers.loadFlash();
+    </script>
+    <![endif]-->
+    
   </head>
   <body>
     <div id="testSWF">

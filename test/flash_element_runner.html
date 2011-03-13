@@ -13,11 +13,9 @@
     <script type="text/javascript">
       var testHelpers =  {
         tellFlashTrue: function () {
-          console.log('telling flash true');
           return true;
         },
         flashIsReady: function () {
-          console.log('flash is reporting ready');
           jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
           jasmine.getEnv().execute();
         },
@@ -33,10 +31,13 @@
 
       if (window.addEventListener) {
         window.addEventListener('load', testHelpers.loadFlash, false);
-      } else {
-        window.attachEvent('load', testHelpers.loadFlash);
       }
     </script>
+    <!--[if IE 8]>
+    <script defer>
+      testHelpers.loadFlash();
+    </script>
+    <![endif]-->
 
   </head>
   <body>

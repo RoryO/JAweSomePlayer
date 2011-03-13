@@ -9,7 +9,7 @@ package awesome {
     private var _volume:Number = 1;
     private var _sound:Sound = new Sound();
     private var _transform:SoundTransform = new SoundTransform();
-    private var _channel:SoundChannel;
+    private var _channel:SoundChannel = new SoundChannel();
     private var _soundPosition:Number = 0;
     private var _isPlaying:Boolean = false;
 
