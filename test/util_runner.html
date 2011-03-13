@@ -16,16 +16,8 @@
     <script src="spec/es5_spec.js" type="text/javascript"></script>
     <script src="spec/util_spec.js" type="text/javascript"></script>
     <script type="text/javascript">
-      if (window.addEventListener) {
-        window.addEventListener("load", function () { init(); }, false); 
-      } else {
-        window.attachEvent("load", function () { init(); });
-      }
-
-      var init = function () {
         jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
         jasmine.getEnv().execute();
-      }
     </script>
 
   </body>
