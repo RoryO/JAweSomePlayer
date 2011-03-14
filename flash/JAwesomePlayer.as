@@ -51,7 +51,7 @@ package {
 
     private function loadExternalCallbacks():void {
       ExternalInterface.addCallback('volume', _sm.volume);
-      ExternalInterface.addCallback('play', _sm.play);
+      ExternalInterface.addCallback('_play', _sm.play);
       ExternalInterface.addCallback('pause', _sm.pause);
       ExternalInterface.addCallback('paused', _sm.isPaused);
       ExternalInterface.addCallback('addEventListener', EventEmitter.registerExternal);

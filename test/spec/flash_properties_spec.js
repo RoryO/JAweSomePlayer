@@ -15,7 +15,7 @@ describe("Flash external properties", function () {
 
     it("should start playback properly", function () {
       var flash = document.getElementById("testSWF");
-      flash.play();
+      flash._play();
       expect(flash.paused()).toBeFalsy();
     });
 

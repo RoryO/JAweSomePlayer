@@ -2211,7 +2211,12 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
     },
 
     play: function () {
-      engineElement.play();
+      //Thanks a bunch IE!
+      if(isFlashElement) {
+        engineElement._play();
+      } else {
+        engineElement.play();
+      }
     },
 
     pause: function () {
