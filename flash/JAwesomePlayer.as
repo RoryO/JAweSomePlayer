@@ -50,11 +50,11 @@ package {
     }
 
     private function loadExternalCallbacks():void {
-      ExternalInterface.addCallback('volume', _sm.volume);
+      ExternalInterface.addCallback('_volume', _sm.volume);
       ExternalInterface.addCallback('_play', _sm.play);
-      ExternalInterface.addCallback('pause', _sm.pause);
-      ExternalInterface.addCallback('paused', _sm.isPaused);
-      ExternalInterface.addCallback('addEventListener', EventEmitter.registerExternal);
+      ExternalInterface.addCallback('_pause', _sm.pause);
+      ExternalInterface.addCallback('_paused', _sm.isPaused);
+      ExternalInterface.addCallback('_addEventListener', EventEmitter.registerExternal);
       ExternalInterface.call(loaderInfo.parameters.onready, ExternalInterface.objectID);
     }
 

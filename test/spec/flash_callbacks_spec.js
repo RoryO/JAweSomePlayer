@@ -9,7 +9,7 @@ describe("Flash callbacks", function () {
       testHelpers.expectedOutput = "Playing has started";
     };
     e.addEventListener('play', 'testHelpers.playCallback'); 
-    e.play();
+    e._play();
     expect(testHelpers.expectedOutput).toBe("Playing has started");
   });
 
@@ -18,9 +18,9 @@ describe("Flash callbacks", function () {
     testHelpers.pauseCallback = function () {
       testHelpers.expectedOutput = "Playing has paused";
     };
-    e.addEventListener('pause', 'testHelpers.pauseCallback');
-    e.play();
-    e.pause();
+    e._addEventListener('pause', 'testHelpers.pauseCallback');
+    e._play();
+    e._pause();
     expect(testHelpers.expectedOutput).toBe("Playing has paused");
   });
 
@@ -29,8 +29,8 @@ describe("Flash callbacks", function () {
     testHelpers.volumeChangeCallback = function () {
       testHelpers.expectedOutput = "Volume has changed";
     };
-    e.addEventListener('volumechange', 'testHelpers.volumeChangeCallback');
-    e.volume(0.5);
+    e._addEventListener('volumechange', 'testHelpers.volumeChangeCallback');
+    e._volume(0.5);
     expect(testHelpers.expectedOutput).toBe("Volume has changed");
   });
 

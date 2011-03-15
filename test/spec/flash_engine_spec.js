@@ -4,7 +4,7 @@ describe("Flash full stack", function () {
     p = jsPlayer.create("blank.mp3", 
           {useFlash: true, elementId: "testSWF", flashLocation: "../flash/jsplayer_debug.swf"});
     waitsFor(function () {
-      return jsPlayer.eventBroker.flashReadyIds["testSWF"];
+      return false;  //return jsPlayer.eventBroker.flashReadyIds["testSWF"];
     }, "Flash never reported ready", 10000);
   });
 

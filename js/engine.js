@@ -25,7 +25,7 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
   //allow for exposing properties, only functions.  what a fucking mess.
   getProperty = function (p) {
     if (isFlashElement) {
-      return engineElement[p]();
+      return engineElement["_" + p]();
     } else {
       return engineElement[p];
     }
@@ -33,7 +33,7 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
 
   setProperty = function (p, n) {
     if (isFlashElement) {
-      engineElement[p](n);
+      engineElement["_" + p](n);
     } else {
       engineElement[p] = n;
     }
@@ -56,7 +56,11 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
     },
 
     pause: function () {
-      engineElement.pause();
+      if(isFlashElement) {
+        engineElement._pause();
+      } else {
+        engineElement.pause();
+      }
     },
 
     isPlaying: function () {
