@@ -8,7 +8,7 @@ describe("Flash callbacks", function () {
     testHelpers.playCallback = function () {
       testHelpers.expectedOutput = "Playing has started";
     };
-    e.addEventListener('play', 'testHelpers.playCallback'); 
+    e._addEventListener('play', 'testHelpers.playCallback'); 
     e._play();
     expect(testHelpers.expectedOutput).toBe("Playing has started");
   });

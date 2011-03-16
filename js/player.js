@@ -2139,7 +2139,6 @@ jsPlayer.eventBroker.flashIsReady = function(elementId) {
 
 jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
   if (typeof (fun) !== "function") {
-    console.log(typeof(fun));
     throw new Error("Must pass a function to bind");
   }
   if(!onElement) {
@@ -2147,12 +2146,9 @@ jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
   }
   if (onElement.tagName.toLowerCase() === "object") {
     if (!onElement.id || onElement.id === "") {
-      throw new Error("Flash onElement to attach events must have an ID");
+      throw new Error("Flash element must have an ID");
     }
-    jsPlayer.eventBroker.flashEvents[onElement.id] = jsPlayer.eventBroker.flashEvents[onElement.id] || {};
-    jsPlayer.eventBroker.flashEvents[onElement.id][eventName] = fun;
-    onElement.addEventListener(eventName,
-      "jsPlayer.eventBroker.flashEvents." + onElement.id + "." + eventName);
+    jsPlayer.eventBroker.addFlashEvent(eventName, fun, onElement.id);
   } else {
     if (onElement.addEventListener) {
       onElement.addEventListener(eventName, fun, false);
@@ -2160,6 +2156,20 @@ jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
       //Hi IE
       onElement.attachEvent(eventName, fun);
     }
+  }
+};
+
+jsPlayer.eventBroker.addFlashEvent = function (eventName, fun, elementId) {
+  if (!jsPlayer.eventBroker.flashReadyIds[elementId]) {
+    window.setTimeout(function () {
+      jsPlayer.eventBroker.addFlashEvent(eventName, fun, elementId)
+    }, 100);
+  } else {
+    if (!jsPlayer.eventBroker.flashEvents[elementId]) {
+      jsPlayer.eventBroker.flashEvents[elementId] = {};
+    }
+    document.getElementById(elementId)._addEventListener(eventName, 
+                  jsPlayer.eventBroker.flashEvents[elementId][eventName = fun]); 
   }
 };
 var jsPlayer = jsPlayer || {};
@@ -2189,7 +2199,7 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
   //allow for exposing properties, only functions.  what a fucking mess.
   getProperty = function (p) {
     if (isFlashElement) {
-      return engineElement[p]();
+      return engineElement["_" + p]();
     } else {
       return engineElement[p];
     }
@@ -2197,7 +2207,7 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
 
   setProperty = function (p, n) {
     if (isFlashElement) {
-      engineElement[p](n);
+      engineElement["_" + p](n);
     } else {
       engineElement[p] = n;
     }
@@ -2220,7 +2230,11 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
     },
 
     pause: function () {
-      engineElement.pause();
+      if(isFlashElement) {
+        engineElement._pause();
+      } else {
+        engineElement.pause();
+      }
     },
 
     isPlaying: function () {
