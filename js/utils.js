@@ -90,3 +90,19 @@ if (!Object.merge) {
     return retval;
   }
 }
+
+if (!Object.prototype.toQueryString) {
+  Object.prototype.toQueryString = function () {
+    var retval = "";
+    "use strict";
+    for (var name in this) {
+      if (this.hasOwnProperty(name)) {
+        if (retval !== "") {
+          retval += "&";
+        }
+        retval += encodeURI(name) + "=" + encodeURI(new String(this[name]));
+      }
+    }
+    return retval;
+  }
+}

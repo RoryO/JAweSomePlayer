@@ -50,4 +50,10 @@ describe("Object extensions", function () {
 
     expect(Object.merge(obj2, obj1)).toEqual({one: 1, two: 2, three: 6, four: 4, five: 5})
   });
+
+  it("toQueryString", function () {
+    var obj1 = {a: "b", c: "d", e: 1, f: "a space"};
+    expect(obj1.toQueryString()).toBe("a=b&c=d&e=1&f=a%20space");
+  });
+
 });

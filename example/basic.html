@@ -50,6 +50,11 @@
     }
     window.addEventListener('load', init, false);
     </script>
+    <!--[if lte IE 8]>
+    <script defer>
+      init();
+    </script>
+    <![endif]-->
   </body>
 
 </html>

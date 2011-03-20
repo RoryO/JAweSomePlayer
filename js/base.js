@@ -76,15 +76,25 @@ jsPlayer.create = function (sourceURL, params) {
   };
 
   buildFlash = function () {
-    swfobject.embedSWF(params.flashLocation, elementId, "1", "1", "9.0.0", "", 
-      { checkready: 'jsPlayer.eventBroker.tellFlashTrue',
-        onready: 'jsPlayer.eventBroker.flashIsReportingReady',
-        allowscriptaccess: 'always',
-        url: sourceURL }, {}, {id: elementId, name: elementId} );
-    //while(!jsPlayer.eventBroker.flashIsReady) {
-      //false;
-    //}
-    return document.getElementById(elementId);
+    var attrs = {
+          width: 1,
+          height: 1,
+          data: params.flashLocation
+        },
+        flashVarsObject = {
+          checkready: 'jsPlayer.eventBroker.tellFlashTrue',
+          onready: 'jsPlayer.eventBroker.flashIsReportingReady',
+          allowscriptaccess: 'always',
+          url: sourceURL
+        },
+        flashParams, flashElement;
+
+    if (swfobject.hasFlashPlayerVersion("9.0.0")) {
+      flashParams = { flashvars: flashVarsObject.toQueryString() };
+      flashElement = swfobject.createSWF(attrs, flashParams, elementId);
+      flashElement.setAttribute('name', elementId);
+    }
+    return flashElement;
   };
 
   // detect audio engine
