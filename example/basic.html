@@ -48,7 +48,9 @@
           "flashPlayer", useFlash: true, flashLocation:
           "../flash/jsplayer.swf"});
     }
-    window.addEventListener('load', init, false);
+    if (window.addEventListener) {
+      window.addEventListener('load', init, false);
+    }
     </script>
     <!--[if lte IE 8]>
     <script defer>

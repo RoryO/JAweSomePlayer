@@ -124,7 +124,7 @@ jsPlayer.create = function (sourceURL, params) {
         startStopElement = document.createElement("div");
         jsPlayer.domExt.addClass(startStopElement, "startStop");
         jsPlayer.domExt.addClass(startStopElement, "startStopLoading");
-        node.appendChild(startStopElement);
+        //node.appendChild(startStopElement);
         controls.startStop = startStopElement;
       }
       //forego this for now
