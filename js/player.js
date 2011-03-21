@@ -944,12 +944,12 @@ if (!Object.merge) {
   }
 }
 
-if (!Object.prototype.toQueryString) {
-  Object.prototype.toQueryString = function () {
+if (!Object.toQueryString) {
+  Object.toQueryString = function (o) {
     var retval = "";
     "use strict";
-    for (var name in this) {
-      if (this.hasOwnProperty(name)) {
+    for (var name in o) {
+      if (o.hasOwnProperty(name)) {
         if (retval !== "") {
           retval += "&";
         }
@@ -2371,7 +2371,7 @@ jsPlayer.create = function (sourceURL, params) {
         flashParams, flashElement;
 
     if (swfobject.hasFlashPlayerVersion("9.0.0")) {
-      flashParams = { flashvars: flashVarsObject.toQueryString() };
+      flashParams = { flashvars: Object.toQueryString(flashVarsObject) };
       flashElement = swfobject.createSWF(attrs, flashParams, elementId);
       flashElement.setAttribute('name', elementId);
     }

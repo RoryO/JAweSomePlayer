@@ -90,7 +90,7 @@ jsPlayer.create = function (sourceURL, params) {
         flashParams, flashElement;
 
     if (swfobject.hasFlashPlayerVersion("9.0.0")) {
-      flashParams = { flashvars: flashVarsObject.toQueryString() };
+      flashParams = { flashvars: Object.toQueryString(flashVarsObject) };
       flashElement = swfobject.createSWF(attrs, flashParams, elementId);
       flashElement.setAttribute('name', elementId);
     }
