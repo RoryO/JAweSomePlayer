@@ -953,7 +953,7 @@ if (!Object.toQueryString) {
         if (retval !== "") {
           retval += "&";
         }
-        retval += encodeURI(name) + "=" + encodeURI(new String(this[name]));
+        retval += encodeURI(name) + "=" + encodeURI(new String(o[name]));
       }
     }
     return retval;

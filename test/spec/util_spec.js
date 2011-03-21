@@ -52,8 +52,8 @@ describe("Object extensions", function () {
   });
 
   it("toQueryString", function () {
-    var obj1 = {a: "b", c: "d", e: 1, f: "a space"};
-    expect(obj1.toQueryString()).toBe("a=b&c=d&e=1&f=a%20space");
+    var o = {a: "b", c: "d", e: 1, f: "a space"};
+    expect(Object.toQueryString(o)).toBe("a=b&c=d&e=1&f=a%20space");
   });
 
 });
