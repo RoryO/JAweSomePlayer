@@ -27,29 +27,30 @@ describe("Flash full stack", function () {
     expect(p.engine.isPlaying()).toBeFalsy();
   });
 
-  //it("should fire callbacks on playback", function () {
-    //p.engine.bind('onplay', function () { 
-      //testHelpers.expectedOutput = "Playback fired";
-    //});
-    //p.engine.play();
-    //expect(testHelpers.expectedOutput).toBe("Playback fired");
-  //});
+  it("should fire callbacks on playback", function () {
+    p.engine.pause();
+    p.engine.bind('onplay', function () { 
+      testHelpers.expectedOutput = "Playback fired";
+    });
+    p.engine.play();
+    expect(testHelpers.expectedOutput).toBe("Playback fired");
+  });
 
-  //it("should fire callbacks on pause", function () {
-    //p.engine.bind('onpause', function () {
-      //testHelpers.expectedOutput = "Playback paused";
-    //});
-    //p.engine.pause();
-    //expect(testHelpers.expectedOutput).toBe("Playback Paused");
-  //});
+  it("should fire callbacks on pause", function () {
+    p.engine.bind('onpause', function () {
+      testHelpers.expectedOutput = "Playback paused";
+    });
+    p.engine.pause();
+    expect(testHelpers.expectedOutput).toBe("Playback Paused");
+  });
 
-  //it("should fire callbacks on volume change", function () {
-    //p.engine.bind('volumechange', function () {
-      //testHelpers.expectedOutput = 'Volume changed';
-    //});
-    //p.engine.volume(1.0);
-    //expect(testHelpers.expectedOutput).toBe("Volume changed");
-  //});
+  it("should fire callbacks on volume change", function () {
+    p.engine.bind('volumechange', function () {
+      testHelpers.expectedOutput = 'Volume changed';
+    });
+    p.engine.volume(1.0);
+    expect(testHelpers.expectedOutput).toBe("Volume changed");
+  });
 
   
 });

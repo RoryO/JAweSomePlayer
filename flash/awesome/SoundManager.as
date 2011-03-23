@@ -12,15 +12,19 @@ package awesome {
     private var _channel:SoundChannel = new SoundChannel();
     private var _soundPosition:Number = 0;
     private var _isPlaying:Boolean = false;
+    private var _urlRequest:URLRequest;
 
     public function SoundManager(locationUrl:String, autostart:Boolean = false) {
-      _sound.load(new URLRequest(locationUrl));
+      _urlRequest = new URLRequest(locationUrl);
+    }
+
+    public function beginLoading():void {
+      trace("flash is loading data now");
+      _sound.load(_urlRequest);
       _sound.addEventListener(Event.OPEN,
-          EventEmitter.captureFlashEvent);
-      //_sound.addEventListener(Event.PROGRESS,
-          //EventEmitter.captureFlashEvent);
+          EventEmitter.loadedDataFromMedia);
       _sound.addEventListener(Event.COMPLETE,
-          EventEmitter.captureFlashEvent);
+          EventEmitter.loadedDataFromMedia);
     }
 
     public function play():void {

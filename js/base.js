@@ -87,14 +87,23 @@ jsPlayer.create = function (sourceURL, params) {
           allowscriptaccess: 'always',
           url: sourceURL
         },
-        flashParams, flashElement;
+        flashParams, flashElement, flashTargetDiv, flashElementId;
 
     if (swfobject.hasFlashPlayerVersion("9.0.0")) {
+      flashTargetDiv = document.createElement('div');
+      flashElementId = elementId + "_" + new Date().getTime();
+      attrs.id = flashElementId;
+      attrs.name = flashElementId;
+      flashTargetDiv.setAttribute('id', flashElementId);
+      document.getElementById(elementId).appendChild(flashTargetDiv);
       flashParams = { flashvars: Object.toQueryString(flashVarsObject) };
-      flashElement = swfobject.createSWF(attrs, flashParams, elementId);
-      flashElement.setAttribute('name', elementId);
+      flashElement = swfobject.createSWF(attrs, flashParams, flashElementId);
+      return flashElement;
+    } else {
+      elementId.innerHTML("<p>Flash player required</p>");
+      throw new Error("Flash player >9 no detected");
+      return;
     }
-    return flashElement;
   };
 
   // detect audio engine
@@ -127,38 +136,6 @@ jsPlayer.create = function (sourceURL, params) {
         node.appendChild(startStopElement);
         controls.startStop = startStopElement;
       }
-      //forego this for now
-      //if (params.controls.volume) {
-        //volumeElement = document.createElement("input");
-        //volumeElement.setAttribute("type", "text");
-        //volumeElement.style.display = "none";
-        //volumeElement.setAttribute("value", 1);
-        //volumeElement.setAttribute("class", "volumeSlider");
-        //node.appendChild(volumeElement);
-        //controls.volume = volumeElement;
-        //fdSlider.createSlider({
-          //inp: volumeElement,
-          //step: 0.01,
-          //maxStep: 0.1,
-          //min: 0,
-          //max: 1,
-          //vertical: true,
-          //callbacks: {change: [
-            //function (e) {
-              //outObject.engine.volume(e.value);
-            //}
-          //]}
-        //});
-      //}
-      //if (params.controls.scrubber) {
-        //scrubElement = document.createElement("input");
-        //scrubElement.setAttribute("type", "text");
-        //scrubElement.style.display = "none";
-        //scrubElement.setAttribute("value", 0);
-        //scrubElement.setAttribute("class", "scrubber");
-        //node.appendChild(scrubElement);
-        //controls.scrubber = scrubElement;
-      //}
     }
   }());
 
@@ -182,17 +159,6 @@ jsPlayer.create = function (sourceURL, params) {
         }
       });
     }
-
-    //if (controls.scrubber) {
-      //fdSlider.destroySlider(controls.scrubber);
-      //fdSlider.createSlider({
-        //inp: controls.scrubber,
-        //step: 1,
-        //maxStep: 1,
-        //min: 0,
-        //max: engine.length()
-      //});
-    //}
 
     if (params.autostart) {
       engine.play();

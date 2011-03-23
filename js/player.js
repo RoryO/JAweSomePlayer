@@ -2141,8 +2141,11 @@ jsPlayer.eventBroker.flashReadyIds = {};
 jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
   if(!elementId) {
     throw new Error("No element ID in flashIsReportingReady");
-  } 
-  jsPlayer.eventBroker.flashReadyIds[elementId] = true;
+  }
+  jsPlayer.eventBroker.flashReadyIds[elementId.split("_")[0]] = true;
+  //tell Flash to start loading data
+  console.log("telling Flash to start loading");
+  document.getElementById(elementId).__beginLoading();
 };
 
 jsPlayer.eventBroker.flashIsReady = function(elementId) {
@@ -2157,12 +2160,14 @@ jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
   if (typeof (fun) !== "function") {
     throw new Error("Must pass a function to bind");
   }
+
   if(!onElement) {
     throw new Error("Element to bind to not provided");
   }
+
   if (onElement.tagName.toLowerCase() === "object") {
     if (!onElement.id || onElement.id === "") {
-      throw new Error("Flash element must have an ID");
+      throw new Error("Flash element must have an ID ");
     }
     jsPlayer.eventBroker.addFlashEvent(eventName, fun, onElement.id);
   } else {
@@ -2176,14 +2181,17 @@ jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
 };
 
 jsPlayer.eventBroker.addFlashEvent = function (eventName, fun, elementId) {
-  if (!jsPlayer.eventBroker.flashReadyIds[elementId]) {
+  if (!jsPlayer.eventBroker.flashReadyIds[elementId.split("_")[0]]) {
+    console.log("flash isn't ready to accept an event!");
     window.setTimeout(function () {
       jsPlayer.eventBroker.addFlashEvent(eventName, fun, elementId)
     }, 100);
   } else {
+    console.log("flash is ready to accept " + eventName);
     if (!jsPlayer.eventBroker.flashEvents[elementId]) {
       jsPlayer.eventBroker.flashEvents[elementId] = {};
     }
+    console.log("adding to flash element RIGHT NOW: " + elementId);
     document.getElementById(elementId)._addEventListener(eventName, 
                   jsPlayer.eventBroker.flashEvents[elementId][eventName = fun]); 
   }
@@ -2192,7 +2200,6 @@ var jsPlayer = jsPlayer || {};
 
 jsPlayer.createEngine = function (engineElement, elementType, argp) {
   "use strict";
-
   var outObject = {},
       params = argp || {},
       outer = this,
@@ -2368,14 +2375,23 @@ jsPlayer.create = function (sourceURL, params) {
           allowscriptaccess: 'always',
           url: sourceURL
         },
-        flashParams, flashElement;
+        flashParams, flashElement, flashTargetDiv, flashElementId;
 
     if (swfobject.hasFlashPlayerVersion("9.0.0")) {
+      flashTargetDiv = document.createElement('div');
+      flashElementId = elementId + "_" + new Date().getTime();
+      attrs.id = flashElementId;
+      attrs.name = flashElementId;
+      flashTargetDiv.setAttribute('id', flashElementId);
+      document.getElementById(elementId).appendChild(flashTargetDiv);
       flashParams = { flashvars: Object.toQueryString(flashVarsObject) };
-      flashElement = swfobject.createSWF(attrs, flashParams, elementId);
-      flashElement.setAttribute('name', elementId);
+      flashElement = swfobject.createSWF(attrs, flashParams, flashElementId);
+      return flashElement;
+    } else {
+      elementId.innerHTML("<p>Flash player required</p>");
+      throw new Error("Flash player >9 no detected");
+      return;
     }
-    return flashElement;
   };
 
   // detect audio engine
@@ -2408,38 +2424,6 @@ jsPlayer.create = function (sourceURL, params) {
         node.appendChild(startStopElement);
         controls.startStop = startStopElement;
       }
-      //forego this for now
-      //if (params.controls.volume) {
-        //volumeElement = document.createElement("input");
-        //volumeElement.setAttribute("type", "text");
-        //volumeElement.style.display = "none";
-        //volumeElement.setAttribute("value", 1);
-        //volumeElement.setAttribute("class", "volumeSlider");
-        //node.appendChild(volumeElement);
-        //controls.volume = volumeElement;
-        //fdSlider.createSlider({
-          //inp: volumeElement,
-          //step: 0.01,
-          //maxStep: 0.1,
-          //min: 0,
-          //max: 1,
-          //vertical: true,
-          //callbacks: {change: [
-            //function (e) {
-              //outObject.engine.volume(e.value);
-            //}
-          //]}
-        //});
-      //}
-      //if (params.controls.scrubber) {
-        //scrubElement = document.createElement("input");
-        //scrubElement.setAttribute("type", "text");
-        //scrubElement.style.display = "none";
-        //scrubElement.setAttribute("value", 0);
-        //scrubElement.setAttribute("class", "scrubber");
-        //node.appendChild(scrubElement);
-        //controls.scrubber = scrubElement;
-      //}
     }
   }());
 
@@ -2463,17 +2447,6 @@ jsPlayer.create = function (sourceURL, params) {
         }
       });
     }
-
-    //if (controls.scrubber) {
-      //fdSlider.destroySlider(controls.scrubber);
-      //fdSlider.createSlider({
-        //inp: controls.scrubber,
-        //step: 1,
-        //maxStep: 1,
-        //min: 0,
-        //max: engine.length()
-      //});
-    //}
 
     if (params.autostart) {
       engine.play();

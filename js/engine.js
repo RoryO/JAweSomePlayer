@@ -2,7 +2,6 @@ var jsPlayer = jsPlayer || {};
 
 jsPlayer.createEngine = function (engineElement, elementType, argp) {
   "use strict";
-
   var outObject = {},
       params = argp || {},
       outer = this,

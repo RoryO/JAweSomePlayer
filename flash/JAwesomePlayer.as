@@ -55,6 +55,9 @@ package {
       ExternalInterface.addCallback('_pause', _sm.pause);
       ExternalInterface.addCallback('_paused', _sm.isPaused);
       ExternalInterface.addCallback('_addEventListener', EventEmitter.registerExternal);
+
+      //non-html5 namespaced with double underscore
+      ExternalInterface.addCallback('__beginLoading', _sm.beginLoading);
       ExternalInterface.call(loaderInfo.parameters.onready, ExternalInterface.objectID);
     }
 
