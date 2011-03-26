@@ -19,6 +19,7 @@ package {
       _sm = new SoundManager(root.loaderInfo.parameters.url);
       loaderInfo.addEventListener(Event.INIT, waitForExternalAvail);
       loaderInfo.addEventListener(Event.COMPLETE, waitForExternalAvail);
+      trace("dickbutt");
       CONFIG::debug {
         //import ominds.Firebug;
         //Firebug.connect(root);
@@ -58,6 +59,7 @@ package {
 
       //non-html5 namespaced with double underscore
       ExternalInterface.addCallback('__beginLoading', _sm.beginLoading);
+      ExternalInterface.addCallback('__dumpEventList', EventEmitter.dumpEventList);
       ExternalInterface.call(loaderInfo.parameters.onready, ExternalInterface.objectID);
     }
 

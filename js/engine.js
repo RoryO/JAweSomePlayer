@@ -40,6 +40,7 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
 
   return {
     engineElement: engineElement,
+    isFlash: isFlashElement,
 
     bind: function (name, fun) {
       jsPlayer.eventBroker.listenFor(name, fun, engineElement);

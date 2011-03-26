@@ -2137,14 +2137,28 @@ jsPlayer.eventBroker.tellFlashTrue = function () {
 };
 
 jsPlayer.eventBroker.flashReadyIds = {};
+jsPlayer.eventBroker.flashEventQueue = {};
 
 jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
+  var rootId;
+  console.log("flash is reporting ready " + elementId);
   if(!elementId) {
     throw new Error("No element ID in flashIsReportingReady");
   }
-  jsPlayer.eventBroker.flashReadyIds[elementId.split("_")[0]] = true;
+  rootId = elementId.split("_")[0];
+
+  //move all events in the queue in place before loading (to catch onload events etc)
+  if (jsPlayer.eventBroker.flashEventQueue[elementId]){
+    console.log('flash ready, moving events from queue');
+    for(var n in jsPlayer.eventBroker.flashEventQueue[elementId]) {
+      if (jsPlayer.eventBroker.flashEventQueue[elementId].hasOwnProperty(n)) {
+        jsPlayer.eventBroker.addFlashEvent(n, 
+          jsPlayer.eventBroker.flashEventQueue[elementId][n], elementId);
+      }
+    }
+  }
+  jsPlayer.eventBroker.flashReadyIds[rootId] = true;
   //tell Flash to start loading data
-  console.log("telling Flash to start loading");
   document.getElementById(elementId).__beginLoading();
 };
 
@@ -2181,19 +2195,28 @@ jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
 };
 
 jsPlayer.eventBroker.addFlashEvent = function (eventName, fun, elementId) {
+  var timestamp, eventPathName;
+
   if (!jsPlayer.eventBroker.flashReadyIds[elementId.split("_")[0]]) {
-    console.log("flash isn't ready to accept an event!");
-    window.setTimeout(function () {
-      jsPlayer.eventBroker.addFlashEvent(eventName, fun, elementId)
-    }, 100);
+    console.log("flash isn't ready to accept an event!  adding to queue");
+    if (!jsPlayer.eventBroker.flashEventQueue[elementId]) {
+      jsPlayer.eventBroker.flashEventQueue[elementId] = {}
+    }
+    jsPlayer.eventBroker.flashEventQueue[elementId][eventName] = fun;
   } else {
     console.log("flash is ready to accept " + eventName);
     if (!jsPlayer.eventBroker.flashEvents[elementId]) {
       jsPlayer.eventBroker.flashEvents[elementId] = {};
     }
-    console.log("adding to flash element RIGHT NOW: " + elementId);
-    document.getElementById(elementId)._addEventListener(eventName, 
-                  jsPlayer.eventBroker.flashEvents[elementId][eventName = fun]); 
+    if (!jsPlayer.eventBroker.flashEvents[elementId][eventName]) {
+      jsPlayer.eventBroker.flashEvents[elementId][eventName] = {}
+    }
+    timestamp = new Date().getTime();
+    eventPathName = 'jsPlayer.eventBroker.flashEvents[' + elementId + ']' +
+                    '[' + eventName + ']' +
+                    '[' + timestamp + ']';
+    jsPlayer.eventBroker.flashEvents[elementId][eventName][timestamp] = fun;
+    document.getElementById(elementId)._addEventListener(eventName, eventPathName);
   }
 };
 var jsPlayer = jsPlayer || {};
@@ -2238,6 +2261,7 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
 
   return {
     engineElement: engineElement,
+    isFlash: isFlashElement,
 
     bind: function (name, fun) {
       jsPlayer.eventBroker.listenFor(name, fun, engineElement);
@@ -2303,12 +2327,36 @@ jsPlayer.detection.audio = function(mimeType) {
   }
 };
 
-//jsPlayer.buildHTMLAudio = function(rootElement, url, mimeType) {
-  //var el = document.createElement("audio");
-  //el.setAttribute("src", url);
-  //rootElement.appendChild(el);
-  //return el;
-//};
+jsPlayer.constructors = {
+  startStopElement: function(rootElementId, engine) {
+    var startStop;
+
+    startStop = document.createElement("div");
+    jsPlayer.domExt.addClass(startStop, "startStop");
+    jsPlayer.domExt.addClass(startStop, "startStopLoading");
+    document.getElementById(rootElementId).appendChild(startStop);
+    engine.bind('loadeddata', function () {
+      jsPlayer.domExt.removeClass(startStop, "startStopLoading");
+      jsPlayer.domExt.addClass(startStop, "playerStopped");
+    });
+    engine.bind('play', function () {
+      jsPlayer.domExt.removeClass(startStop, "playerStopped");
+      jsPlayer.domExt.addClass(startStop, "playerStarted");
+    });
+    engine.bind('pause', function () {
+      jsPlayer.domExt.removeClass(startStop, "playerStarted");
+      jsPlayer.domExt.addClass(startStop, "playerStopped");
+    });
+    jsPlayer.domExt.bindEvent(startStop, 'click', function () {
+      if (engine.isPlaying()) { 
+        engine.pause(); 
+      } else {
+        engine.play();
+      }
+    });
+    return startStop;
+  }
+}
 
 jsPlayer.create = function (sourceURL, params) {
   "use strict";
@@ -2323,9 +2371,9 @@ jsPlayer.create = function (sourceURL, params) {
       defaultParams = { elementId: "jsPlayer",
                         autostart: false,
                         flashLocation: "jsplayer.swf",
-                        controls: { startStop: true, 
-                                    scrubber: true, 
-                                    volume: true }
+                        controls: { 
+                          startStop: jsPlayer.constructors.startStopElement
+                        }
       };
 
   if (!sourceURL) {
@@ -2408,58 +2456,14 @@ jsPlayer.create = function (sourceURL, params) {
   }
 
   // construct player controls
-  (function () {
-    var node = document.getElementById(elementId),
-        startStopElement, 
-        volumeElement, 
-        scrubElement;
-
-    if (outObject.engineType === "Native" && params.useNativeControls) {
-      engine.engineElement.setAttribute("controls", "controls");
-    } else {
-      if (params.controls.startStop) {
-        startStopElement = document.createElement("div");
-        jsPlayer.domExt.addClass(startStopElement, "startStop");
-        jsPlayer.domExt.addClass(startStopElement, "startStopLoading");
-        //node.appendChild(startStopElement);
-        controls.startStop = startStopElement;
-      }
-    }
-  }());
-
-  playbackReady = function () {
-    if (controls.startStop) {
-      jsPlayer.domExt.removeClass(controls.startStop, "startStopLoading");
-      jsPlayer.domExt.addClass(controls.startStop, "playerStopped");
-      engine.bind('play', function () {
-        jsPlayer.domExt.removeClass(controls.startStop, "playerStopped");
-        jsPlayer.domExt.addClass(controls.startStop, "playerStarted");
-      });
-      engine.bind('pause', function () {
-        jsPlayer.domExt.removeClass(controls.startStop, "playerStarted");
-        jsPlayer.domExt.addClass(controls.startStop, "playerStopped");
-      });
-      jsPlayer.domExt.bindEvent(controls.startStop, 'click', function () {
-        if (engine.isPlaying()) {
-          engine.pause();
-        } else {
-          engine.play();
-        }
-      });
-    }
-
-    if (params.autostart) {
-      engine.play();
-    }
-  };
-
-  //event bindings
-  engine.bind('loadeddata', playbackReady);
-
-  outObject.engine = engine;
-  if (controls) {
-    outObject.controls = controls;
+  if (params.controls.startStop && typeof(params.controls.startStop) === "function") {
+    params.controls.startStop.apply(this, [elementId, engine]);
   }
+
+  if (params.autostart) {
+    engine.play();
+  }
+  outObject.engine = engine;
   return outObject;
 };
 

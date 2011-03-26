@@ -48,6 +48,7 @@ describe("Flash full stack", function () {
     p.engine.bind('volumechange', function () {
       testHelpers.expectedOutput = 'Volume changed';
     });
+    console.log(p.engine.engineElement.__dumpEventList());
     p.engine.volume(1.0);
     expect(testHelpers.expectedOutput).toBe("Volume changed");
   });

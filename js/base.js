@@ -15,12 +15,36 @@ jsPlayer.detection.audio = function(mimeType) {
   }
 };
 
-//jsPlayer.buildHTMLAudio = function(rootElement, url, mimeType) {
-  //var el = document.createElement("audio");
-  //el.setAttribute("src", url);
-  //rootElement.appendChild(el);
-  //return el;
-//};
+jsPlayer.constructors = {
+  startStopElement: function(rootElementId, engine) {
+    var startStop;
+
+    startStop = document.createElement("div");
+    jsPlayer.domExt.addClass(startStop, "startStop");
+    jsPlayer.domExt.addClass(startStop, "startStopLoading");
+    document.getElementById(rootElementId).appendChild(startStop);
+    engine.bind('loadeddata', function () {
+      jsPlayer.domExt.removeClass(startStop, "startStopLoading");
+      jsPlayer.domExt.addClass(startStop, "playerStopped");
+    });
+    engine.bind('play', function () {
+      jsPlayer.domExt.removeClass(startStop, "playerStopped");
+      jsPlayer.domExt.addClass(startStop, "playerStarted");
+    });
+    engine.bind('pause', function () {
+      jsPlayer.domExt.removeClass(startStop, "playerStarted");
+      jsPlayer.domExt.addClass(startStop, "playerStopped");
+    });
+    jsPlayer.domExt.bindEvent(startStop, 'click', function () {
+      if (engine.isPlaying()) { 
+        engine.pause(); 
+      } else {
+        engine.play();
+      }
+    });
+    return startStop;
+  }
+}
 
 jsPlayer.create = function (sourceURL, params) {
   "use strict";
@@ -35,9 +59,9 @@ jsPlayer.create = function (sourceURL, params) {
       defaultParams = { elementId: "jsPlayer",
                         autostart: false,
                         flashLocation: "jsplayer.swf",
-                        controls: { startStop: true, 
-                                    scrubber: true, 
-                                    volume: true }
+                        controls: { 
+                          startStop: jsPlayer.constructors.startStopElement
+                        }
       };
 
   if (!sourceURL) {
@@ -120,58 +144,14 @@ jsPlayer.create = function (sourceURL, params) {
   }
 
   // construct player controls
-  (function () {
-    var node = document.getElementById(elementId),
-        startStopElement, 
-        volumeElement, 
-        scrubElement;
-
-    if (outObject.engineType === "Native" && params.useNativeControls) {
-      engine.engineElement.setAttribute("controls", "controls");
-    } else {
-      if (params.controls.startStop) {
-        startStopElement = document.createElement("div");
-        jsPlayer.domExt.addClass(startStopElement, "startStop");
-        jsPlayer.domExt.addClass(startStopElement, "startStopLoading");
-        //node.appendChild(startStopElement);
-        controls.startStop = startStopElement;
-      }
-    }
-  }());
-
-  playbackReady = function () {
-    if (controls.startStop) {
-      jsPlayer.domExt.removeClass(controls.startStop, "startStopLoading");
-      jsPlayer.domExt.addClass(controls.startStop, "playerStopped");
-      engine.bind('play', function () {
-        jsPlayer.domExt.removeClass(controls.startStop, "playerStopped");
-        jsPlayer.domExt.addClass(controls.startStop, "playerStarted");
-      });
-      engine.bind('pause', function () {
-        jsPlayer.domExt.removeClass(controls.startStop, "playerStarted");
-        jsPlayer.domExt.addClass(controls.startStop, "playerStopped");
-      });
-      jsPlayer.domExt.bindEvent(controls.startStop, 'click', function () {
-        if (engine.isPlaying()) {
-          engine.pause();
-        } else {
-          engine.play();
-        }
-      });
-    }
-
-    if (params.autostart) {
-      engine.play();
-    }
-  };
-
-  //event bindings
-  engine.bind('loadeddata', playbackReady);
-
-  outObject.engine = engine;
-  if (controls) {
-    outObject.controls = controls;
+  if (params.controls.startStop && typeof(params.controls.startStop) === "function") {
+    params.controls.startStop.apply(this, [elementId, engine]);
   }
+
+  if (params.autostart) {
+    engine.play();
+  }
+  outObject.engine = engine;
   return outObject;
 };
 

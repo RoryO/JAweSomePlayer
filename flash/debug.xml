@@ -1,6 +1,7 @@
 <flex-config>
   <compiler>
     <debug>true</debug>
+    <optimize>false</optimize>
     <verbose-stacktraces>true</verbose-stacktraces>
     <define>
       <name>CONFIG::debug</name>

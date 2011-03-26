@@ -13,14 +13,28 @@ jsPlayer.eventBroker.tellFlashTrue = function () {
 };
 
 jsPlayer.eventBroker.flashReadyIds = {};
+jsPlayer.eventBroker.flashEventQueue = {};
 
 jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
+  var rootId;
+  console.log("flash is reporting ready " + elementId);
   if(!elementId) {
     throw new Error("No element ID in flashIsReportingReady");
   }
-  jsPlayer.eventBroker.flashReadyIds[elementId.split("_")[0]] = true;
+  rootId = elementId.split("_")[0];
+
+  //move all events in the queue in place before loading (to catch onload events etc)
+  if (jsPlayer.eventBroker.flashEventQueue[elementId]){
+    console.log('flash ready, moving events from queue');
+    for(var n in jsPlayer.eventBroker.flashEventQueue[elementId]) {
+      if (jsPlayer.eventBroker.flashEventQueue[elementId].hasOwnProperty(n)) {
+        jsPlayer.eventBroker.addFlashEvent(n, 
+          jsPlayer.eventBroker.flashEventQueue[elementId][n], elementId);
+      }
+    }
+  }
+  jsPlayer.eventBroker.flashReadyIds[rootId] = true;
   //tell Flash to start loading data
-  console.log("telling Flash to start loading");
   document.getElementById(elementId).__beginLoading();
 };
 
@@ -57,18 +71,27 @@ jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
 };
 
 jsPlayer.eventBroker.addFlashEvent = function (eventName, fun, elementId) {
+  var timestamp, eventPathName;
+
   if (!jsPlayer.eventBroker.flashReadyIds[elementId.split("_")[0]]) {
-    console.log("flash isn't ready to accept an event!");
-    window.setTimeout(function () {
-      jsPlayer.eventBroker.addFlashEvent(eventName, fun, elementId)
-    }, 100);
+    console.log("flash isn't ready to accept an event!  adding to queue");
+    if (!jsPlayer.eventBroker.flashEventQueue[elementId]) {
+      jsPlayer.eventBroker.flashEventQueue[elementId] = {}
+    }
+    jsPlayer.eventBroker.flashEventQueue[elementId][eventName] = fun;
   } else {
     console.log("flash is ready to accept " + eventName);
     if (!jsPlayer.eventBroker.flashEvents[elementId]) {
       jsPlayer.eventBroker.flashEvents[elementId] = {};
     }
-    console.log("adding to flash element RIGHT NOW: " + elementId);
-    document.getElementById(elementId)._addEventListener(eventName, 
-                  jsPlayer.eventBroker.flashEvents[elementId][eventName = fun]); 
+    if (!jsPlayer.eventBroker.flashEvents[elementId][eventName]) {
+      jsPlayer.eventBroker.flashEvents[elementId][eventName] = {}
+    }
+    timestamp = new Date().getTime();
+    eventPathName = 'jsPlayer.eventBroker.flashEvents[' + elementId + ']' +
+                    '[' + eventName + ']' +
+                    '[' + timestamp + ']';
+    jsPlayer.eventBroker.flashEvents[elementId][eventName][timestamp] = fun;
+    document.getElementById(elementId)._addEventListener(eventName, eventPathName);
   }
 };

@@ -18,6 +18,7 @@ package awesome {
       if (!_eventList[eventName]) {
         _eventList[eventName] = new Array();
       }
+      trace("adding " + eventName + " with " + functionPath);
       _eventList[eventName].push(functionPath);
     }
 
@@ -29,6 +30,17 @@ package awesome {
       if (_eventList[eventName]) {
         _eventList[eventName].forEach(fireEvent);
       }
+    }
+
+    public static function dumpEventList():String {
+      var retval:String = "";
+      for(var n:String in _eventList) {
+        retval += n + ": \n";
+        retval += "Number of events is: " + _eventList[n].length + "\n";
+        retval += _eventList[n].toString();
+        retval += "\n";
+      }
+      return retval;
     }
 
     private static function fireEvent(eventPath:String, ... params):void {
