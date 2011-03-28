@@ -37,7 +37,7 @@ the document.
 
 After the script has been loaded, create a new player object in
 Javascript.  This is done with the jsPlayer.create() function.  The first argument 
-is the URL of the media file, the second parameter is an options object for 
+is the URL of the media file location, the second parameter is an options object for 
 controlling how and where the player is built (see [options object](#options))
 
 You can do this with a window.onload event, however this is best done after the
@@ -46,24 +46,44 @@ needed.  Utilizing a proven library will take the pain out of this for you.
 
 With [jQuery](http://jquery.org)
     jQuery(document).ready(function() {
-      var player = jsPlayer.create("http://localhost/my_file.mp3", {elementID: "myPlayer"})
+      var player = jsPlayer.create("http://localhost/my_file.mp3", {elementId: "myPlayer"})
     })
 
 [Prototype](http://prototypejs.org)
     Event.observe('dom:loaded', function() {
-      var player = jsPlayer.create("http://localhost/my_file.mp3", {elementID:"myPlayer"})
+      var player = jsPlayer.create("http://localhost/my_file.mp3", {elementId:"myPlayer"})
     })
+
+Without either, the following should work but the reliability is
+questionable in complex documents.  This uses addEventListener on
+browsers that support it, and IE's non-standard 'defer' option that
+executes scripts only after the DOM is ready.
+    <script type="text/javascript" charset="utf-8">
+    var init = function () {
+      var player = jsPlayer.create("http://localhost/my_file.mp3",
+          {elementId:"myPlayer"}
+    if (window.addEventListener) {
+      window.addEventListener('load', init, false);
+    }
+    </script>
+    <!--[if lte IE 8]>
+    <script defer>
+      init();
+    </script>
+    <![endif]-->
 
 The library will automatically attempt to determine the MIME type of
 the media file and if the browser can play it natively or not.  If
 the browser can play it back natively, it will use the native HTML tag
 element and place it as the first child of the div ID.  If
 the browser cannot play it natively, it will automatically fall back to
-an embedded 1x1 Flash player as the first children of the div
+an embedded 1x1 Flash player as the first child of the provided div
 ID.  If the automatic detection proves buggy or unreliable, the options
 parameters useFlash or useNative will force using the Flash or native
-media elements respectively.  The player will also build a set of controls 
-as divs underneath as playback controls.
+media elements respectively.  The player will also build a start/stop
+div as a button underneath the ID provided by default.  See 'customizing
+controls' if you want to build other controls or change how the controls
+are built.
 
 
 OPTIONS OBJECT
@@ -101,14 +121,36 @@ Sometimes the MIME type doesn't give enough information.  For instance,
 this if the browser can't figure out how to play the file with just a
 MIME string.  See [RFC 4281](http://tools.ietf.org/html/rfc4281).
 
-controls: 
+CUSTOMIZING CONTROLS
+===
+The controls object located in the options object is used to control
+what and how the HTML controls are automatically built by create(). By
+default, create() will only build a start/stop div, but you can build
+other types of controls by using a function as a factory.  The function
+accepts two parameters, the first is the ID of the root element, the
+second is a reference to the engine object.  Using these the function
+can create the controls needed however you choose and bind events to the engine.
+An anonymous or named function will work.  For example
 
-Default: {startStop: true, scrubber: true, volume: true}
+    var buildStartStop = function (elementId, engine) {
+      var e = document.createElement("div");
+      e.setAttribute("class", "startStopButton");
+      document.getElementById(elementId).appendChild(e);
+      engine.bind('play', function () {
+        //removing classes, adding classes, interacting with other HTML elements on the page, and so forth
+      }
+      //contuining on with constucting elements, binding events and however you see fit
+    }
 
-Set any of the elements to something falsy if you don't want to build
-that set of controls.  You can still use the engine to manipulate the
-playback.
+Then using that function
+    jsPlayer.create("something.mp3", {elementId: "player",
+                                      controls: { startStop: buildStartStop }
+                                      }
 
+The available control functions are
+startStop: Building the start and stop button.  Enabled by
+default
+volume: Building the volume control.  Disabled by default
 
 CONTROLLING THE MEDIA
 ===
@@ -126,13 +168,21 @@ constructor, i.e
     player.engine.play();
 
 You can also register callbacks for all of the events handled by the
-engine.  Register a new event with the .bind method on the engine.
+engine.  This is normally done with constructing control elements, but
+it can also be useful to add events after the fact for enabling or
+disabling certain other HTML elements based upon what is happening.
+Register a new event with the .bind function on the engine, the internal
+private functions of the bind() function handles the translation of
+Flash or HTML events and organizes the functions internally.
+
     player.engine.bind('timeChange', function (t) { console.log('Time changed to ' + t)});
 
 The available events to bind to have the same name as the HTML media
 event names listed at
 [The W3C media element page](http://www.w3.org/TR/html5/video.html#mediaevents)
 
+The presently supported events are
+play, pause, volumechange, loadeddata
 ENGINE CONTROL METHODS
 ===
 play(): Starts playback
@@ -140,6 +190,8 @@ play(): Starts playback
 pause(): Pauses playback
 
 volume(n): Changes the volume, must be between 0 and 1.0
+
+seekTo(n): Set the position of playback, in seconds
 
 
 ENGINE PROPERTIES
@@ -150,25 +202,14 @@ volume(): Decimal value of the current volume
 
 currentPosition(): Current playback position in seconds
 
+isFlash(): True if the playback engine element is Flash
+
+length(): Returns the length of the media element, in seconds.
 
 ENGINE CALLBACKS
 ===
-engineReady: When the engine has loaded enough information about the
-media file to start playback.  It is recommeded that all controls be
-disabled and uninitialized until the engine is ready.
-
-volumeChange: When the volume has changed.  Passes the new value of the
-volume in decimal form between 0 and 1 to the callback i.e. 0.34.
-
-timeChange: When the player element reports that the playback position
-has changed. Passes the new value of the time reported by the playback
-element in seconds.
-
-onPlay: When player state moved from paused to playing.
-
-onPause: When player state is moved from playing to pause.
-
-
+By using the engine.bind() function, you can bind events to the media
+element.  
 CONTRIBUTING
 ===
 
@@ -184,8 +225,9 @@ standard Github procedure to make things simpler for everyone
 
 -Ensure all the tests pass
 
--Rebuild the javascript files by running 'rake javascripts' or the flash
-component by running 'rake compile'
+-Rebuild the JavaScript files by running 'rake' or the flash
+component by running 'rake flash flash\_debug'
+
 -Push back to Github
 
 -If it does not already exist, open a bug or feature ticket report on the 
@@ -202,8 +244,8 @@ Some like Prototype for it's class structure, YUI for the ease of
 developing small applets, Dojo for constructing an interface
 rapidly, Objective-J for a full stack app framework, and so forth.  
 It's not my place to hoist these choices on someone. Furthermore, 
-with Javascript being put into a great deal of applications outside the 
-browser as of late, I wanted to learn how to wrangle Javascript correctly 
+with JavaScript being put into a great deal of applications outside the 
+browser as of late, I wanted to learn how to wrangle JavaScript correctly 
 where a browser library is not available.
 
 Q: How do I make unique players?
