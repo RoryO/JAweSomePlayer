@@ -19,10 +19,8 @@ package {
       _sm = new SoundManager(root.loaderInfo.parameters.url);
       loaderInfo.addEventListener(Event.INIT, waitForExternalAvail);
       loaderInfo.addEventListener(Event.COMPLETE, waitForExternalAvail);
-      trace("dickbutt");
       CONFIG::debug {
-        //import ominds.Firebug;
-        //Firebug.connect(root);
+        trace("Ready to go at: " + new Date());
       }
     }
 

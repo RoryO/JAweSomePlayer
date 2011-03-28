@@ -2129,19 +2129,26 @@ if (!jsPlayer) {
 }
 
 jsPlayer.eventBroker = {
-  flashEvents: {}
-};
+  flashEvents: {},
+  flashReadyIds: {},
+  flashEventQueue: {},
 
-jsPlayer.eventBroker.tellFlashTrue = function () {
-  return true;
-};
+  tellFlashTrue: function () {
+    return true;
+  },
 
-jsPlayer.eventBroker.flashReadyIds = {};
-jsPlayer.eventBroker.flashEventQueue = {};
+  flashIsReady: function(elementId) {
+    if (!jsPlayer.eventBroker.flashReadyIds[elementId]) {
+      setTimeout(jsPlayer.eventBroker.flashIsReady(elementId), 200);
+    } else {
+      return true;
+    }
+  }
+};
 
 jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
   var rootId;
-  console.log("flash is reporting ready " + elementId);
+  "use strict";
   if(!elementId) {
     throw new Error("No element ID in flashIsReportingReady");
   }
@@ -2149,7 +2156,6 @@ jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
 
   //move all events in the queue in place before loading (to catch onload events etc)
   if (jsPlayer.eventBroker.flashEventQueue[elementId]){
-    console.log('flash ready, moving events from queue');
     for(var n in jsPlayer.eventBroker.flashEventQueue[elementId]) {
       if (jsPlayer.eventBroker.flashEventQueue[elementId].hasOwnProperty(n)) {
         jsPlayer.eventBroker.addFlashEvent(n, 
@@ -2162,15 +2168,8 @@ jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
   document.getElementById(elementId).__beginLoading();
 };
 
-jsPlayer.eventBroker.flashIsReady = function(elementId) {
-  if (!jsPlayer.eventBroker.flashReadyIds[elementId]) {
-    setTimeout(jsPlayer.eventBroker.flashIsReady(elementId), 200);
-  } else {
-    return true;
-  }
-};
-
 jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
+  "use strict";
   if (typeof (fun) !== "function") {
     throw new Error("Must pass a function to bind");
   }
@@ -2195,26 +2194,25 @@ jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
 };
 
 jsPlayer.eventBroker.addFlashEvent = function (eventName, fun, elementId) {
+  "use strict";
   var timestamp, eventPathName;
 
   if (!jsPlayer.eventBroker.flashReadyIds[elementId.split("_")[0]]) {
-    console.log("flash isn't ready to accept an event!  adding to queue");
     if (!jsPlayer.eventBroker.flashEventQueue[elementId]) {
-      jsPlayer.eventBroker.flashEventQueue[elementId] = {}
+      jsPlayer.eventBroker.flashEventQueue[elementId] = {};
     }
     jsPlayer.eventBroker.flashEventQueue[elementId][eventName] = fun;
   } else {
-    console.log("flash is ready to accept " + eventName);
     if (!jsPlayer.eventBroker.flashEvents[elementId]) {
       jsPlayer.eventBroker.flashEvents[elementId] = {};
     }
     if (!jsPlayer.eventBroker.flashEvents[elementId][eventName]) {
-      jsPlayer.eventBroker.flashEvents[elementId][eventName] = {}
+      jsPlayer.eventBroker.flashEvents[elementId][eventName] = {};
     }
     timestamp = new Date().getTime();
-    eventPathName = 'jsPlayer.eventBroker.flashEvents[' + elementId + ']' +
-                    '[' + eventName + ']' +
-                    '[' + timestamp + ']';
+    eventPathName = 'jsPlayer.eventBroker.flashEvents["' + elementId + '"]' +
+                    '["' + eventName + '"]' +
+                    '["' + timestamp + '"]';
     jsPlayer.eventBroker.flashEvents[elementId][eventName][timestamp] = fun;
     document.getElementById(elementId)._addEventListener(eventName, eventPathName);
   }
@@ -2330,6 +2328,7 @@ jsPlayer.detection.audio = function(mimeType) {
 jsPlayer.constructors = {
   startStopElement: function(rootElementId, engine) {
     var startStop;
+    "use strict";
 
     startStop = document.createElement("div");
     jsPlayer.domExt.addClass(startStop, "startStop");

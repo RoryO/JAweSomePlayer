@@ -18,6 +18,7 @@ jsPlayer.detection.audio = function(mimeType) {
 jsPlayer.constructors = {
   startStopElement: function(rootElementId, engine) {
     var startStop;
+    "use strict";
 
     startStop = document.createElement("div");
     jsPlayer.domExt.addClass(startStop, "startStop");

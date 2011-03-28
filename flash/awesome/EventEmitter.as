@@ -18,7 +18,9 @@ package awesome {
       if (!_eventList[eventName]) {
         _eventList[eventName] = new Array();
       }
-      trace("adding " + eventName + " with " + functionPath);
+      CONFIG::debug {
+        trace("adding " + eventName + " with " + functionPath);
+      }
       _eventList[eventName].push(functionPath);
     }
 
@@ -27,6 +29,9 @@ package awesome {
     }
 
     public static function fireEventsFor(eventName:String, ... params):void {
+      CONFIG::debug {
+        trace("firing " + eventName);
+      }
       if (_eventList[eventName]) {
         _eventList[eventName].forEach(fireEvent);
       }

@@ -1,5 +1,10 @@
 describe("Flash full stack", function () {
   var p;
+
+  beforeEach(function () {
+    testHelpers.expectedOutput = "";
+  });
+
   it("should embed correctly", function () {
     p = jsPlayer.create("blank.mp3", 
           {useFlash: true, elementId: "testSWF", flashLocation: "../flash/jsplayer_debug.swf"});
@@ -29,26 +34,26 @@ describe("Flash full stack", function () {
 
   it("should fire callbacks on playback", function () {
     p.engine.pause();
-    p.engine.bind('onplay', function () { 
+    p.engine.bind('play', function () { 
       testHelpers.expectedOutput = "Playback fired";
     });
     p.engine.play();
     expect(testHelpers.expectedOutput).toBe("Playback fired");
+    p.engine.pause();
   });
 
   it("should fire callbacks on pause", function () {
-    p.engine.bind('onpause', function () {
+    p.engine.bind('pause', function () {
       testHelpers.expectedOutput = "Playback paused";
     });
     p.engine.pause();
-    expect(testHelpers.expectedOutput).toBe("Playback Paused");
+    expect(testHelpers.expectedOutput).toBe("Playback paused");
   });
 
   it("should fire callbacks on volume change", function () {
     p.engine.bind('volumechange', function () {
       testHelpers.expectedOutput = 'Volume changed';
     });
-    console.log(p.engine.engineElement.__dumpEventList());
     p.engine.volume(1.0);
     expect(testHelpers.expectedOutput).toBe("Volume changed");
   });
