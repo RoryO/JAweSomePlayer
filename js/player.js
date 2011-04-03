@@ -984,7 +984,7 @@ jsPlayer.eventBroker = {
 };
 
 jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
-  var rootId;
+  var rootId, n;
   "use strict";
   if(!elementId) {
     throw new Error("No element ID in flashIsReportingReady");
@@ -993,16 +993,18 @@ jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
 
   //move all events in the queue in place before loading (to catch onload events etc)
   if (jsPlayer.eventBroker.flashEventQueue[elementId]){
-    for(var n in jsPlayer.eventBroker.flashEventQueue[elementId]) {
+    for(n in jsPlayer.eventBroker.flashEventQueue[elementId]) {
       if (jsPlayer.eventBroker.flashEventQueue[elementId].hasOwnProperty(n)) {
         jsPlayer.eventBroker.addFlashEvent(n, 
           jsPlayer.eventBroker.flashEventQueue[elementId][n], elementId);
       }
     }
   }
-  jsPlayer.eventBroker.flashReadyIds[rootId] = true;
   //tell Flash to start loading data
-  document.getElementById(elementId).__beginLoading();
+  if (document.getElementById(elementId).getAttribute('preload') === 'auto') {
+    document.getElementById(elementId)._load();
+  }
+  jsPlayer.eventBroker.flashReadyIds[rootId] = true;
 };
 
 jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
@@ -1285,13 +1287,13 @@ jsPlayer.create = function (sourceURL, params) {
  * @return {HTMLElement}
  * @private
  */
-  buildHTMLAudio = function () {
+  buildHTMLAudio = function (preloadstatus) {
     var p,
         node = document.getElementById(elementId),
         el = document.createElement("audio"),
         defaults = {preload: 'auto'}
     el.setAttribute("src", sourceURL);
-    el.setAttribute('preload', p.preload);
+    el.setAttribute('preload', preloadstatus);
     node.appendChild(el);
     return el;
   };
@@ -1302,7 +1304,7 @@ jsPlayer.create = function (sourceURL, params) {
  * @private
  */
 
-  buildFlash = function () {
+  buildFlash = function (preloadstatus) {
     var attrs = {
           width: 1,
           height: 1,
@@ -1329,6 +1331,7 @@ jsPlayer.create = function (sourceURL, params) {
       document.getElementById(elementId).appendChild(flashTargetDiv);
       flashParams = { flashvars: Object.toQueryString(flashVarsObject) };
       flashElement = swfobject.createSWF(attrs, flashParams, flashElementId);
+      flashElement.setAttribute('preload', preloadstatus);
       return flashElement;
     } else {
       elementId.innerHTML("<p>Flash player required</p>");
@@ -1338,14 +1341,14 @@ jsPlayer.create = function (sourceURL, params) {
 
   // detect audio engine
   if(params.useNative) {
-    engine = jsPlayer.createEngine(buildHTMLAudio(), "Native");
+    engine = jsPlayer.createEngine(buildHTMLAudio(params.preload), "Native");
   } else if (params.useFlash) {
-    engine = jsPlayer.createEngine(buildFlash(), "Flash");
+    engine = jsPlayer.createEngine(buildFlash(params.preload), "Flash");
   } else {
     if (jsPlayer.detection.audio(mimeType)) {
-      engine = jsPlayer.createEngine(buildHTMLAudio(), "Native");
+      engine = jsPlayer.createEngine(buildHTMLAudio(params.preload), "Native");
     } else {
-      engine = jsPlayer.createEngine(buildFlash(), "Flash");
+      engine = jsPlayer.createEngine(buildFlash(params.preload), "Flash");
     }
   }
 
@@ -1357,9 +1360,7 @@ jsPlayer.create = function (sourceURL, params) {
   if (params.autostart) {
     engine.play();
   }
-  if (params.preload === 'auto') {
-    engine.load();
-  }
+
   outObject.engine = engine;
   return outObject;
 };
