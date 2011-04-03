@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="slider.css" type="text/css" media="screen" charset="utf-8">
+    <style type="text/css" media="screen">
+      #studioPlayer {
+        width: 300px;
+      }
+      .startStop {
+        width: 100px;
+        height: 100px;
+      }
+      .playerStopped {
+        background-color: red;
+      }
+      .playerStarted {
+        background-color: green;
+      }
+      .startStopLoading {
+        background-color: orange;
+      }
+      .container {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Native Player</h1>
+      <div id="nativePlayer">
+      </div>
+    </div>
+
+    <br />
+
+    <div class="container">
+      <h1>Flash Player</h1>
+      <div id="flashPlayer">
+      </div>
+    </div>
+
+    <script src="../js/player.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+    var playerNative, playerFlash;
+    function init() {
+      playerNative = jsPlayer.create("libertango.mp3", {elementId: "nativePlayer", useNative: true});
+      playerFlash = jsPlayer.create("libertango.mp3", {elementId:
+          "flashPlayer", useFlash: true, flashLocation:
+          "../flash/jsplayer.swf"});
+    }
+    if (window.addEventListener) {
+      window.addEventListener('load', init, false);
+    }
+    </script>
+    <!--[if lte IE 8]>
+    <script defer>
+      init();
+    </script>
+    <![endif]-->
+  </body>
+
+</html>
