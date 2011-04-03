@@ -5,7 +5,7 @@
 
     <title>Results</title>
     <link rel="stylesheet" href="jasmine/jasmine.css" />
-    <script src="../js/swfobject.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../lib/js/swfobject.js" type="text/javascript" charset="utf-8"></script>
     <script src="jasmine/jasmine.js" type="text/javascript" charset="utf-8"></script>
     <script src="jasmine/jasmine-html.js" type="text/javascript" charset="utf-8"></script>
 
@@ -13,13 +13,20 @@
     <script src="spec/flash_element_callbacks_spec.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
       var testHelpers =  {
+        expectedOutput: "",
+        loadedDataOutput: "",
+        loadingCallback: function () {
+          testHelpers.loadedDataOutput = "Loaded data";
+        },
         tellFlashTrue: function () {
           return true;
         },
         flashIsReady: function () {
+          var e = document.getElementById("testSWF");
+          e._addEventListener('loadeddata', 'testHelpers.loadingCallback');
+          e._load();
           jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
           jasmine.getEnv().execute();
-          document.getElementsByTagName("object")[0].__beginLoading();
         },
         loadFlash: function () {
           swfobject.embedSWF("../flash/jsplayer_debug.swf", 'testSWF', "1", "1", "9.0.0", "", 
@@ -27,8 +34,7 @@
             onready: testHelpers.flashIsReady,
             allowscriptaccess: 'always',
             url: 'blank.mp3'}, {}, {id: 'testSWF'} );
-        },
-        expectedOutput: ""
+        }
       };
 
       if (window.addEventListener) {

@@ -3,6 +3,10 @@ describe("Flash callbacks", function () {
     testHelpers.expectedOutput = "";
   });
 
+  it("should have fired callback when loading data", function () {
+    expect(testHelpers.loadedDataOutput).toBe("loaded data");
+  });
+
   it("should fire callback when playing has started", function () {
     var e = document.getElementById("testSWF");
     testHelpers.playCallback = function () {
@@ -26,14 +30,12 @@ describe("Flash callbacks", function () {
 
   it("should fire callback when volume has changed", function () {
     var e = document.getElementById("testSWF");
-    alert(testHelpers.expectedOutput);
     testHelpers.volumeChangeCallback = function () {
       testHelpers.expectedOutput = "Volume has changed";
     };
     e._addEventListener('volumechange', 'testHelpers.volumeChangeCallback');
     e._volume(0.5);
     expect(testHelpers.expectedOutput).toBe("Volume has changed");
-    alert(testHelpers.expectedOutput);
   });
 
 });

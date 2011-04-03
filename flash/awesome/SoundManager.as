@@ -13,13 +13,18 @@ package awesome {
     private var _soundPosition:Number = 0;
     private var _isPlaying:Boolean = false;
     private var _urlRequest:URLRequest;
+    private var _soundLoaded:Boolean = false;
 
     public function SoundManager(locationUrl:String, autostart:Boolean = false) {
       _urlRequest = new URLRequest(locationUrl);
     }
 
     public function beginLoading():void {
+      if (_soundLoaded) {
+        return;
+      }
       trace("flash is loading data now");
+      _soundLoaded = true;
       _sound.load(_urlRequest);
       _sound.addEventListener(Event.OPEN,
           EventEmitter.loadedDataFromMedia);

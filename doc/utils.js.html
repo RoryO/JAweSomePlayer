@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: JAwesomePlayer   utils.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css?stamp=1301367539.81" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css?stamp=1301367539.81" />
+
+    <script type="text/javascript" src="assets/api-js?stamp=1301367539.81"></script>
+    <script type="text/javascript" src="assets/ac-js?stamp=1301367539.81"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>JAwesomePlayer&nbsp; <span class="subtitle">0.1</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_jawesomeplayer.html" title="JAwesomePlayer">JAwesomePlayer</a>
+                
+                 &gt; utils.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight"><pre><span class="cm">/*global window: false */</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">last</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">last</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> 
+    <span class="k">return</span> <span class="k">this</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span> 
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">cycle</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">cycle</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">retval</span><span class="p">;</span>
+    <span class="nx">retval</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">retval</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">retval</span><span class="p">;</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">jsPlayer</span> <span class="o">=</span> <span class="nx">jsPlayer</span> <span class="o">||</span> <span class="p">{};</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">classArray</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">classArray</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">el</span><span class="p">.</span><span class="nx">className</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">);</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">hasClass</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">klass</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">classArray</span><span class="p">(</span><span class="nx">el</span><span class="p">).</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">klass</span><span class="p">)</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">addClass</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">addClass</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">klass</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">klass</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">el</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">className</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">klass</span><span class="p">;</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">removeClass</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">klass</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">classList</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">klass</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">classList</span> <span class="o">=</span> <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">classArray</span><span class="p">(</span><span class="nx">el</span><span class="p">).</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">member</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">member</span> <span class="o">!==</span> <span class="nx">klass</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">member</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+    <span class="nx">el</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="nx">classList</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">);</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">bindEvent</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">bindEvent</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">eventName</span><span class="p">,</span> <span class="nx">fun</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="nx">fun</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s2">&quot;Must pass in a function to be bound&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">el</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">fun</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="c1">//hi IE</span>
+      <span class="nx">el</span><span class="p">.</span><span class="nx">attachEvent</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">fun</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">Object</span><span class="p">.</span><span class="nx">merge</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nb">Object</span><span class="p">.</span><span class="nx">merge</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">retval</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">ele</span> <span class="k">in</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
+          <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">retval</span><span class="p">[</span><span class="nx">ele</span><span class="p">])</span> <span class="p">{</span>
+            <span class="nx">retval</span><span class="p">[</span><span class="nx">ele</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">ele</span><span class="p">];</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">retval</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">Object</span><span class="p">.</span><span class="nx">toQueryString</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nb">Object</span><span class="p">.</span><span class="nx">toQueryString</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">retval</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">name</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">retval</span> <span class="o">!==</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">retval</span> <span class="o">+=</span> <span class="s2">&quot;&amp;&quot;</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">retval</span> <span class="o">+=</span> <span class="nb">encodeURI</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="nb">encodeURI</span><span class="p">(</span><span class="k">new</span> <span class="nb">String</span><span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">name</span><span class="p">]));</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">retval</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="module_JAwesomePlayer.html" title="JAwesomePlayer">JAwesomePlayer</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="constructors.html" title="constructors">constructors</a></li>
+                                <li class=""><a href="detection.html" title="detection">detection</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="base.js.html" title="base.js">base.js</a></li>
+                                <li class=""><a href="broker.js.html" title="broker.js">broker.js</a></li>
+                                <li class=""><a href="engine.js.html" title="engine.js">engine.js</a></li>
+                                <li class=""><a href="es5-shim.js.html" title="es5-shim.js">es5-shim.js</a></li>
+                                <li class=""><a href="swfobject.js.html" title="swfobject.js">swfobject.js</a></li>
+                                <li class="selected"><a href="utils.js.html" title="utils.js">utils.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2011 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"url": "detection.html#method_audio", "access": "", "host": "detection", "type": "method", "name": "audio"}, {"url": "constructors.html#method_create", "access": "", "host": "constructors", "type": "method", "name": "create"}, {"url": "constructors.html#method_startStop", "access": "", "host": "constructors", "type": "method", "name": "startStop"}];
+</script>
+</body>
+</html>

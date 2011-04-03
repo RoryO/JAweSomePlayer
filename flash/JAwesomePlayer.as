@@ -53,10 +53,10 @@ package {
       ExternalInterface.addCallback('_play', _sm.play);
       ExternalInterface.addCallback('_pause', _sm.pause);
       ExternalInterface.addCallback('_paused', _sm.isPaused);
+      ExternalInterface.addCallback('_load', _sm.beginLoading);
       ExternalInterface.addCallback('_addEventListener', EventEmitter.registerExternal);
 
       //non-html5 namespaced with double underscore
-      ExternalInterface.addCallback('__beginLoading', _sm.beginLoading);
       ExternalInterface.addCallback('__dumpEventList', EventEmitter.dumpEventList);
       ExternalInterface.call(loaderInfo.parameters.onready, ExternalInterface.objectID);
     }

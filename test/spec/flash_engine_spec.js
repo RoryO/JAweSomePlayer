@@ -7,7 +7,8 @@ describe("Flash full stack", function () {
 
   it("should embed correctly", function () {
     p = jsPlayer.create("blank.mp3", 
-          {useFlash: true, elementId: "testSWF", flashLocation: "../flash/jsplayer_debug.swf"});
+          {useFlash: true, elementId: "testSWF", 
+            flashLocation: "../flash/jsplayer_debug.swf", flashAutoload:false});
     waitsFor(function () {
       return jsPlayer.eventBroker.flashReadyIds["testSWF"];
     }, "Flash never reported ready", 10000);
