@@ -25,7 +25,7 @@ package awesome {
     }
 
     public static function loadedDataFromMedia(e:Event):void {
-      fireEvent('loadeddata');
+      fireEventsFor('loadeddata');
     }
 
     public static function fireEventsFor(eventName:String, ... params):void {

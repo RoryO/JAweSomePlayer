@@ -1,9 +1,17 @@
 <div class="highlight"><pre><span class="kd">var</span> <span class="nx">jsPlayer</span> <span class="o">=</span> <span class="nx">jsPlayer</span> <span class="o">||</span> <span class="p">{};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Creates a javascript engine object targeting the specified element.</span>
+<span class="cm"> * @method createEngine</span>
+<span class="cm"> * @param {HTMLElement} engineElement</span>
+<span class="cm"> * @param {String} elementType</span>
+<span class="cm"> * @param {Object} argp</span>
+<span class="cm"> * @return {Object}</span>
+<span class="cm">*/</span>
 
 <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">createEngine</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">engineElement</span><span class="p">,</span> <span class="nx">elementType</span><span class="p">,</span> <span class="nx">argp</span><span class="p">)</span> <span class="p">{</span>
   <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
   <span class="kd">var</span> <span class="nx">outObject</span> <span class="o">=</span> <span class="p">{},</span>
-      <span class="nx">params</span> <span class="o">=</span> <span class="nx">argp</span> <span class="o">||</span> <span class="p">{},</span>
+      <span class="nx">params</span> <span class="o">=</span> <span class="nx">argp</span> <span class="o">||</span> <span class="p">{</span><span class="nx">preload</span><span class="o">:</span> <span class="s1">&#39;auto&#39;</span><span class="p">},</span>
       <span class="nx">outer</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
       <span class="nx">getProperty</span><span class="p">,</span> <span class="nx">setProperty</span><span class="p">,</span>
       <span class="nx">isFlashElement</span><span class="p">;</span>
@@ -46,6 +54,7 @@
       <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">eventBroker</span><span class="p">.</span><span class="nx">listenFor</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">fun</span><span class="p">,</span> <span class="nx">engineElement</span><span class="p">);</span>
     <span class="p">},</span>
 
+    <span class="c1">//we should be able to abstract these, but it is safer this way for now</span>
     <span class="nx">play</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
       <span class="c1">//Thanks a bunch IE!</span>
       <span class="k">if</span><span class="p">(</span><span class="nx">isFlashElement</span><span class="p">)</span> <span class="p">{</span>
@@ -60,6 +69,15 @@
         <span class="nx">engineElement</span><span class="p">.</span><span class="nx">_pause</span><span class="p">();</span>
       <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
         <span class="nx">engineElement</span><span class="p">.</span><span class="nx">pause</span><span class="p">();</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">load</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">isFlashElement</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">engineElement</span><span class="p">);</span>
+        <span class="nx">engineElement</span><span class="p">.</span><span class="nx">_load</span><span class="p">();</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">engineElement</span><span class="p">.</span><span class="nx">load</span><span class="p">();</span>
       <span class="p">}</span>
     <span class="p">},</span>
 

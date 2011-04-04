@@ -30,6 +30,7 @@ jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
   }
   rootId = elementId.split("_")[0];
 
+  jsPlayer.eventBroker.flashReadyIds[rootId] = true;
   //move all events in the queue in place before loading (to catch onload events etc)
   if (jsPlayer.eventBroker.flashEventQueue[elementId]){
     for(n in jsPlayer.eventBroker.flashEventQueue[elementId]) {
@@ -43,7 +44,6 @@ jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
   if (document.getElementById(elementId).getAttribute('preload') === 'auto') {
     document.getElementById(elementId)._load();
   }
-  jsPlayer.eventBroker.flashReadyIds[rootId] = true;
 };
 
 jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {

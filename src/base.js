@@ -43,14 +43,14 @@ jsPlayer.constructors = {
     startStopElement = document.createElement("div");
     jsPlayer.domExt.addClass(startStopElement, "startStop");
     jsPlayer.domExt.addClass(startStopElement, "startStopLoading");
-    document.getElementById(rootElementId).appendChild(startStop);
+    document.getElementById(rootElementId).appendChild(startStopElement);
     engine.bind('loadeddata', function () {
       jsPlayer.domExt.removeClass(startStopElement, "startStopLoading");
       jsPlayer.domExt.addClass(startStopElement, "playerStopped");
     });
     engine.bind('play', function () {
-      jsPlayer.domExt.removeClass(startStop, "playerStopped");
-      jsPlayer.domExt.addClass(startStop, "playerStarted");
+      jsPlayer.domExt.removeClass(startStopElement, "playerStopped");
+      jsPlayer.domExt.addClass(startStopElement, "playerStarted");
     });
     engine.bind('pause', function () {
       jsPlayer.domExt.removeClass(startStopElement, "playerStarted");
@@ -85,7 +85,7 @@ jsPlayer.create = function (sourceURL, params) {
                         flashLocation: "jsplayer.swf",
                         preload: 'auto',
                         controls: { 
-                          startStop: jsPlayer.constructors.startStopElement
+                          startStop: jsPlayer.constructors.startStop
                         }
                       };
 
@@ -124,7 +124,7 @@ jsPlayer.create = function (sourceURL, params) {
     var p,
         node = document.getElementById(elementId),
         el = document.createElement("audio"),
-        defaults = {preload: 'auto'}
+        defaults = {preload: 'auto'};
     el.setAttribute("src", sourceURL);
     el.setAttribute('preload', preloadstatus);
     node.appendChild(el);
@@ -149,18 +149,13 @@ jsPlayer.create = function (sourceURL, params) {
           allowscriptaccess: 'always',
           url: sourceURL
         },
-        defaults = {
-          preload: 'auto'
-        },
-        flashParams, flashElement, flashTargetDiv, flashElementId, p;
-    p = Object.merge(params, defaults);
+        flashParams, flashElement, flashTargetDiv, flashElementId;
     if (swfobject.hasFlashPlayerVersion("9.0.0")) {
       flashTargetDiv = document.createElement('div');
       flashElementId = elementId + "_" + new Date().getTime();
       attrs.id = flashElementId;
       attrs.name = flashElementId;
       flashTargetDiv.setAttribute('id', flashElementId);
-      flashTargetDiv.setAttribute('preload', p.preload);
       document.getElementById(elementId).appendChild(flashTargetDiv);
       flashParams = { flashvars: Object.toQueryString(flashVarsObject) };
       flashElement = swfobject.createSWF(attrs, flashParams, flashElementId);
@@ -168,7 +163,7 @@ jsPlayer.create = function (sourceURL, params) {
       return flashElement;
     } else {
       elementId.innerHTML("<p>Flash player required</p>");
-      throw new Error("Flash player >9 no detected");
+      throw new Error("Flash player >9 not detected");
     }
   };
 
@@ -197,4 +192,3 @@ jsPlayer.create = function (sourceURL, params) {
   outObject.engine = engine;
   return outObject;
 };
-

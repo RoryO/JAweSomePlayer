@@ -23,7 +23,7 @@
 <span class="p">};</span>
 
 <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">eventBroker</span><span class="p">.</span><span class="nx">flashIsReportingReady</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elementId</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">rootId</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">rootId</span><span class="p">,</span> <span class="nx">n</span><span class="p">;</span>
   <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
   <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">elementId</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;No element ID in flashIsReportingReady&quot;</span><span class="p">);</span>
@@ -32,16 +32,18 @@
 
   <span class="c1">//move all events in the queue in place before loading (to catch onload events etc)</span>
   <span class="k">if</span> <span class="p">(</span><span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">eventBroker</span><span class="p">.</span><span class="nx">flashEventQueue</span><span class="p">[</span><span class="nx">elementId</span><span class="p">]){</span>
-    <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">n</span> <span class="k">in</span> <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">eventBroker</span><span class="p">.</span><span class="nx">flashEventQueue</span><span class="p">[</span><span class="nx">elementId</span><span class="p">])</span> <span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="nx">n</span> <span class="k">in</span> <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">eventBroker</span><span class="p">.</span><span class="nx">flashEventQueue</span><span class="p">[</span><span class="nx">elementId</span><span class="p">])</span> <span class="p">{</span>
       <span class="k">if</span> <span class="p">(</span><span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">eventBroker</span><span class="p">.</span><span class="nx">flashEventQueue</span><span class="p">[</span><span class="nx">elementId</span><span class="p">].</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">n</span><span class="p">))</span> <span class="p">{</span>
         <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">eventBroker</span><span class="p">.</span><span class="nx">addFlashEvent</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> 
           <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">eventBroker</span><span class="p">.</span><span class="nx">flashEventQueue</span><span class="p">[</span><span class="nx">elementId</span><span class="p">][</span><span class="nx">n</span><span class="p">],</span> <span class="nx">elementId</span><span class="p">);</span>
       <span class="p">}</span>
     <span class="p">}</span>
   <span class="p">}</span>
-  <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">eventBroker</span><span class="p">.</span><span class="nx">flashReadyIds</span><span class="p">[</span><span class="nx">rootId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
   <span class="c1">//tell Flash to start loading data</span>
-  <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">elementId</span><span class="p">).</span><span class="nx">__beginLoading</span><span class="p">();</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">elementId</span><span class="p">).</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;preload&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;auto&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">elementId</span><span class="p">).</span><span class="nx">_load</span><span class="p">();</span>
+  <span class="p">}</span>
+  <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">eventBroker</span><span class="p">.</span><span class="nx">flashReadyIds</span><span class="p">[</span><span class="nx">rootId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">eventBroker</span><span class="p">.</span><span class="nx">listenFor</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">fun</span><span class="p">,</span> <span class="nx">onElement</span><span class="p">)</span> <span class="p">{</span>

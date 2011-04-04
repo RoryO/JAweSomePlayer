@@ -38,9 +38,17 @@
         studioNative = jsPlayer.create("http://krui.student-services.uiowa.edu:8103/listen", 
             {elementId: "studioNative", mimeType: "audio/mpeg", useNative: true});
         studioFlash = jsPlayer.create("http://krui.student-services.uiowa.edu:8103/listen",
-            {elementId: "studioFlash", mimeType: "audio/mpeg", useFlash: true});
+            {elementId: "studioFlash", mimeType: "audio/mpeg", 
+              useFlash: true, flashLocation: "../flash/jsplayer.swf"});
       };
-      window.addEventListener('load', init, false);
+      if (window.addEventListener) {
+        window.addEventListener('load', init, false);
+      }
     </script>
+    <!--[if lte IE 8]>
+    <script defer>
+      init();
+    </script>
+    <![endif]-->
   </body>
 </html>

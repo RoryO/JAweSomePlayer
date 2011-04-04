@@ -74,7 +74,6 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
 
     load: function () {
       if(isFlashElement) {
-        console.log(engineElement);
         engineElement._load();
       } else {
         engineElement.load();

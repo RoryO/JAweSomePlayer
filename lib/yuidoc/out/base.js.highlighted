@@ -39,11 +39,12 @@
   <span class="nx">startStop</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">rootElementId</span><span class="p">,</span> <span class="nx">engine</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">startStopElement</span><span class="p">;</span>
     <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;should be constructing startStop&quot;</span><span class="p">);</span>
 
     <span class="nx">startStopElement</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">);</span>
     <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">startStopElement</span><span class="p">,</span> <span class="s2">&quot;startStop&quot;</span><span class="p">);</span>
     <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">startStopElement</span><span class="p">,</span> <span class="s2">&quot;startStopLoading&quot;</span><span class="p">);</span>
-    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">rootElementId</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">startStop</span><span class="p">);</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">rootElementId</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">startStopElement</span><span class="p">);</span>
     <span class="nx">engine</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;loadeddata&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
       <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">startStopElement</span><span class="p">,</span> <span class="s2">&quot;startStopLoading&quot;</span><span class="p">);</span>
       <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">domExt</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">startStopElement</span><span class="p">,</span> <span class="s2">&quot;playerStopped&quot;</span><span class="p">);</span>
@@ -76,21 +77,18 @@
 <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">create</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sourceURL</span><span class="p">,</span> <span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
   <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
   <span class="kd">var</span> <span class="nx">controls</span> <span class="o">=</span> <span class="p">{},</span>
-      <span class="nx">playbackReady</span><span class="p">,</span>
-      <span class="nx">mimeType</span><span class="p">,</span>
-      <span class="nx">engine</span><span class="p">,</span>
-      <span class="nx">elementId</span><span class="p">,</span>
+      <span class="nx">playbackReady</span><span class="p">,</span> <span class="nx">mimeType</span><span class="p">,</span>
+      <span class="nx">engine</span><span class="p">,</span> <span class="nx">elementId</span><span class="p">,</span>
+      <span class="nx">buildHTMLAudio</span><span class="p">,</span> <span class="nx">buildFlash</span><span class="p">,</span>
       <span class="nx">outObject</span> <span class="o">=</span> <span class="p">{},</span>
-      <span class="nx">buildHTMLAudio</span><span class="p">,</span>
-      <span class="nx">buildFlash</span><span class="p">,</span>
       <span class="nx">defaultParams</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">elementId</span><span class="o">:</span> <span class="s2">&quot;jsPlayer&quot;</span><span class="p">,</span>
                         <span class="nx">autostart</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
                         <span class="nx">flashLocation</span><span class="o">:</span> <span class="s2">&quot;jsplayer.swf&quot;</span><span class="p">,</span>
                         <span class="nx">preload</span><span class="o">:</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span>
                         <span class="nx">controls</span><span class="o">:</span> <span class="p">{</span> 
-                          <span class="nx">startStop</span><span class="o">:</span> <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">constructors</span><span class="p">.</span><span class="nx">startStopElement</span>
+                          <span class="nx">startStop</span><span class="o">:</span> <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">constructors</span><span class="p">.</span><span class="nx">startStop</span>
                         <span class="p">}</span>
-      <span class="p">};</span>
+                      <span class="p">};</span>
 
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sourceURL</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;URL of media not provided&quot;</span><span class="p">);</span>
@@ -123,15 +121,24 @@
 <span class="cm"> * @return {HTMLElement}</span>
 <span class="cm"> * @private</span>
 <span class="cm"> */</span>
-  <span class="nx">buildHTMLAudio</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">elementId</span><span class="p">),</span>
-        <span class="nx">el</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;audio&quot;</span><span class="p">);</span>
+  <span class="nx">buildHTMLAudio</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">preloadstatus</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">p</span><span class="p">,</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">elementId</span><span class="p">),</span>
+        <span class="nx">el</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;audio&quot;</span><span class="p">),</span>
+        <span class="nx">defaults</span> <span class="o">=</span> <span class="p">{</span><span class="nx">preload</span><span class="o">:</span> <span class="s1">&#39;auto&#39;</span><span class="p">}</span>
     <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s2">&quot;src&quot;</span><span class="p">,</span> <span class="nx">sourceURL</span><span class="p">);</span>
+    <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;preload&#39;</span><span class="p">,</span> <span class="nx">preloadstatus</span><span class="p">);</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
     <span class="k">return</span> <span class="nx">el</span><span class="p">;</span>
   <span class="p">};</span>
 
-  <span class="nx">buildFlash</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="cm">/**</span>
+<span class="cm"> * @method buildFlash</span>
+<span class="cm"> * @return {HTMLElement}</span>
+<span class="cm"> * @private</span>
+<span class="cm"> */</span>
+
+  <span class="nx">buildFlash</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">preloadstatus</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">attrs</span> <span class="o">=</span> <span class="p">{</span>
           <span class="nx">width</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
           <span class="nx">height</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
@@ -143,46 +150,53 @@
           <span class="nx">allowscriptaccess</span><span class="o">:</span> <span class="s1">&#39;always&#39;</span><span class="p">,</span>
           <span class="nx">url</span><span class="o">:</span> <span class="nx">sourceURL</span>
         <span class="p">},</span>
-        <span class="nx">flashParams</span><span class="p">,</span> <span class="nx">flashElement</span><span class="p">,</span> <span class="nx">flashTargetDiv</span><span class="p">,</span> <span class="nx">flashElementId</span><span class="p">;</span>
-
+        <span class="nx">defaults</span> <span class="o">=</span> <span class="p">{</span>
+          <span class="nx">preload</span><span class="o">:</span> <span class="s1">&#39;auto&#39;</span>
+        <span class="p">},</span>
+        <span class="nx">flashParams</span><span class="p">,</span> <span class="nx">flashElement</span><span class="p">,</span> <span class="nx">flashTargetDiv</span><span class="p">,</span> <span class="nx">flashElementId</span><span class="p">,</span> <span class="nx">p</span><span class="p">;</span>
+    <span class="nx">p</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">params</span><span class="p">,</span> <span class="nx">defaults</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">swfobject</span><span class="p">.</span><span class="nx">hasFlashPlayerVersion</span><span class="p">(</span><span class="s2">&quot;9.0.0&quot;</span><span class="p">))</span> <span class="p">{</span>
       <span class="nx">flashTargetDiv</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
       <span class="nx">flashElementId</span> <span class="o">=</span> <span class="nx">elementId</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">();</span>
       <span class="nx">attrs</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">flashElementId</span><span class="p">;</span>
       <span class="nx">attrs</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">flashElementId</span><span class="p">;</span>
       <span class="nx">flashTargetDiv</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">flashElementId</span><span class="p">);</span>
+      <span class="nx">flashTargetDiv</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;preload&#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">preload</span><span class="p">);</span>
       <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">elementId</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">flashTargetDiv</span><span class="p">);</span>
       <span class="nx">flashParams</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">flashvars</span><span class="o">:</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">toQueryString</span><span class="p">(</span><span class="nx">flashVarsObject</span><span class="p">)</span> <span class="p">};</span>
       <span class="nx">flashElement</span> <span class="o">=</span> <span class="nx">swfobject</span><span class="p">.</span><span class="nx">createSWF</span><span class="p">(</span><span class="nx">attrs</span><span class="p">,</span> <span class="nx">flashParams</span><span class="p">,</span> <span class="nx">flashElementId</span><span class="p">);</span>
+      <span class="nx">flashElement</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;preload&#39;</span><span class="p">,</span> <span class="nx">preloadstatus</span><span class="p">);</span>
       <span class="k">return</span> <span class="nx">flashElement</span><span class="p">;</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
       <span class="nx">elementId</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">(</span><span class="s2">&quot;&lt;p&gt;Flash player required&lt;/p&gt;&quot;</span><span class="p">);</span>
       <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Flash player &gt;9 no detected&quot;</span><span class="p">);</span>
-      <span class="k">return</span><span class="p">;</span>
     <span class="p">}</span>
   <span class="p">};</span>
 
   <span class="c1">// detect audio engine</span>
   <span class="k">if</span><span class="p">(</span><span class="nx">params</span><span class="p">.</span><span class="nx">useNative</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">engine</span> <span class="o">=</span> <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">createEngine</span><span class="p">(</span><span class="nx">buildHTMLAudio</span><span class="p">(),</span> <span class="s2">&quot;Native&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">preload</span><span class="o">:</span> <span class="nx">params</span><span class="p">.</span><span class="nx">preload</span><span class="p">});</span>
+    <span class="nx">engine</span> <span class="o">=</span> <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">createEngine</span><span class="p">(</span><span class="nx">buildHTMLAudio</span><span class="p">(</span><span class="nx">params</span><span class="p">.</span><span class="nx">preload</span><span class="p">),</span> <span class="s2">&quot;Native&quot;</span><span class="p">);</span>
   <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">params</span><span class="p">.</span><span class="nx">useFlash</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">engine</span> <span class="o">=</span> <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">createEngine</span><span class="p">(</span><span class="nx">buildFlash</span><span class="p">(),</span> <span class="s2">&quot;Flash&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">preload</span><span class="o">:</span> <span class="nx">params</span><span class="p">.</span><span class="nx">preload</span><span class="p">});</span>
+    <span class="nx">engine</span> <span class="o">=</span> <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">createEngine</span><span class="p">(</span><span class="nx">buildFlash</span><span class="p">(</span><span class="nx">params</span><span class="p">.</span><span class="nx">preload</span><span class="p">),</span> <span class="s2">&quot;Flash&quot;</span><span class="p">);</span>
   <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">detection</span><span class="p">.</span><span class="nx">audio</span><span class="p">(</span><span class="nx">mimeType</span><span class="p">))</span> <span class="p">{</span>
-      <span class="nx">engine</span> <span class="o">=</span> <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">createEngine</span><span class="p">(</span><span class="nx">buildHTMLAudio</span><span class="p">(),</span> <span class="s2">&quot;Native&quot;</span><span class="p">);</span>
+      <span class="nx">engine</span> <span class="o">=</span> <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">createEngine</span><span class="p">(</span><span class="nx">buildHTMLAudio</span><span class="p">(</span><span class="nx">params</span><span class="p">.</span><span class="nx">preload</span><span class="p">),</span> <span class="s2">&quot;Native&quot;</span><span class="p">);</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">engine</span> <span class="o">=</span> <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">createEngine</span><span class="p">(</span><span class="nx">buildFlash</span><span class="p">(),</span> <span class="s2">&quot;Flash&quot;</span><span class="p">);</span>
+      <span class="nx">engine</span> <span class="o">=</span> <span class="nx">jsPlayer</span><span class="p">.</span><span class="nx">createEngine</span><span class="p">(</span><span class="nx">buildFlash</span><span class="p">(</span><span class="nx">params</span><span class="p">.</span><span class="nx">preload</span><span class="p">),</span> <span class="s2">&quot;Flash&quot;</span><span class="p">);</span>
     <span class="p">}</span>
   <span class="p">}</span>
 
   <span class="c1">// construct player controls</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">params</span><span class="p">);</span>
   <span class="k">if</span> <span class="p">(</span><span class="nx">params</span><span class="p">.</span><span class="nx">controls</span><span class="p">.</span><span class="nx">startStop</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span><span class="p">(</span><span class="nx">params</span><span class="p">.</span><span class="nx">controls</span><span class="p">.</span><span class="nx">startStop</span><span class="p">)</span> <span class="o">===</span> <span class="s2">&quot;function&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;should be calling controls constructor function&#39;</span><span class="p">);</span>
     <span class="nx">params</span><span class="p">.</span><span class="nx">controls</span><span class="p">.</span><span class="nx">startStop</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="p">[</span><span class="nx">elementId</span><span class="p">,</span> <span class="nx">engine</span><span class="p">]);</span>
   <span class="p">}</span>
 
   <span class="k">if</span> <span class="p">(</span><span class="nx">params</span><span class="p">.</span><span class="nx">autostart</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">engine</span><span class="p">.</span><span class="nx">play</span><span class="p">();</span>
   <span class="p">}</span>
+
   <span class="nx">outObject</span><span class="p">.</span><span class="nx">engine</span> <span class="o">=</span> <span class="nx">engine</span><span class="p">;</span>
   <span class="k">return</span> <span class="nx">outObject</span><span class="p">;</span>
 <span class="p">};</span>

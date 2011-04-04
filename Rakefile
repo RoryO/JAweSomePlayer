@@ -1,6 +1,6 @@
 VERSION = "0.1"
 
-task :default => [:concat, :minify, :doc]
+task :default => [:concat, :minify]
 
 task :concat => :clean_js do
   File.open("js/player.js", "w+") do |f|

@@ -26,8 +26,6 @@ package awesome {
       trace("flash is loading data now");
       _soundLoaded = true;
       _sound.load(_urlRequest);
-      _sound.addEventListener(Event.OPEN,
-          EventEmitter.loadedDataFromMedia);
       _sound.addEventListener(Event.COMPLETE,
           EventEmitter.loadedDataFromMedia);
     }
