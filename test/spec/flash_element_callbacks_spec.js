@@ -3,10 +3,6 @@ describe("Flash callbacks", function () {
     testHelpers.expectedOutput = "";
   });
 
-  it("should have fired callback when loading data", function () {
-    expect(testHelpers.loadedDataOutput).toBe("loaded data");
-  });
-
   it("should fire callback when playing has started", function () {
     var e = document.getElementById("testSWF");
     testHelpers.playCallback = function () {

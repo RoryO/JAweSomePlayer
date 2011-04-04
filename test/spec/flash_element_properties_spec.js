@@ -1,4 +1,12 @@
 describe("Flash external properties", function () {
+  it("should handle loading callbacks properly", function () {
+    var flash = document.getElementById("testSWF");
+    flash._addEventListener('loadeddata', 'testHelpers.loadingCallback');
+    flash._load();
+    waitsFor(function () {
+      return testHelpers.loadedDataOutput;
+    }, "flash firing loaded data callback", 10000);
+  });
   
   describe("exposed controls", function () {
 

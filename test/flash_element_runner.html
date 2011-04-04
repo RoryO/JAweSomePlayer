@@ -14,9 +14,9 @@
     <script type="text/javascript">
       var testHelpers =  {
         expectedOutput: "",
-        loadedDataOutput: "",
+        loadedDataOutput: false,
         loadingCallback: function () {
-          testHelpers.loadedDataOutput = "Loaded data";
+          testHelpers.loadedDataOutput = true;
         },
         tellFlashTrue: function () {
           return true;
@@ -30,8 +30,8 @@
         },
         loadFlash: function () {
           swfobject.embedSWF("../flash/jsplayer_debug.swf", 'testSWF', "1", "1", "9.0.0", "", 
-          { checkready: testHelpers.tellFlashTrue,
-            onready: testHelpers.flashIsReady,
+          { checkready: 'testHelpers.tellFlashTrue',
+            onready: 'testHelpers.flashIsReady',
             allowscriptaccess: 'always',
             url: 'blank.mp3'}, {}, {id: 'testSWF'} );
         }
