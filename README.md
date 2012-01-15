@@ -1,4 +1,4 @@
-JAweSomePlayer 1.0 * 10\*\*-10
+JAweSomePlayer 1.0
 
 WHAT IS IT
 ===
@@ -15,7 +15,7 @@ libraries taking the pain out of messing with each browser's DOM.
 JAweSomePlayer is licensed under the BSD 3-clause license.
 
 Source at [Github]("http://github.com/RoryO/jawesomeplayer"), with a pretty
-[homepage]("http://metricgnome.net/awesome/jawesomeplayer") containing latest
+[homepage]("http://metricgnome.net/jsplayer") containing latest
 version and documentation.
 
 HOW TO USE IT QUICKLY
