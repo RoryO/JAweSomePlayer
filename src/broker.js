@@ -10,10 +10,12 @@ jsPlayer.eventBroker = {
   flashEventQueue: {},
 
   tellFlashTrue: function () {
+    "use strict";
     return true;
   },
 
-  flashIsReady: function(elementId) {
+  flashIsReady: function (elementId) {
+    "use strict";
     if (!jsPlayer.eventBroker.flashReadyIds[elementId]) {
       setTimeout(jsPlayer.eventBroker.flashIsReady(elementId), 200);
     } else {
@@ -22,20 +24,20 @@ jsPlayer.eventBroker = {
   }
 };
 
-jsPlayer.eventBroker.flashIsReportingReady = function(elementId) {
-  var rootId, n;
+jsPlayer.eventBroker.flashIsReportingReady = function (elementId) {
   "use strict";
-  if(!elementId) {
+  var rootId, n;
+  if (!elementId) {
     throw new Error("No element ID in flashIsReportingReady");
   }
   rootId = elementId.split("_")[0];
 
   jsPlayer.eventBroker.flashReadyIds[rootId] = true;
   //move all events in the queue in place before loading (to catch onload events etc)
-  if (jsPlayer.eventBroker.flashEventQueue[elementId]){
-    for(n in jsPlayer.eventBroker.flashEventQueue[elementId]) {
+  if (jsPlayer.eventBroker.flashEventQueue[elementId]) {
+    for (n in jsPlayer.eventBroker.flashEventQueue[elementId]) {
       if (jsPlayer.eventBroker.flashEventQueue[elementId].hasOwnProperty(n)) {
-        jsPlayer.eventBroker.addFlashEvent(n, 
+        jsPlayer.eventBroker.addFlashEvent(n,
           jsPlayer.eventBroker.flashEventQueue[elementId][n], elementId);
       }
     }
@@ -52,7 +54,7 @@ jsPlayer.eventBroker.listenFor = function (eventName, fun, onElement) {
     throw new Error("Must pass a function to bind");
   }
 
-  if(!onElement) {
+  if (!onElement) {
     throw new Error("Element to bind to not provided");
   }
 

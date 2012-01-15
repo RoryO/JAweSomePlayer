@@ -1,6 +1,6 @@
-VERSION = "0.1"
+VERSION = "1.0"
 
-task :default => [:concat, :minify]
+task :default => [:concat, :minify, :rel]
 
 task :concat => :clean_js do
   File.open("js/player.js", "w+") do |f|
@@ -58,4 +58,10 @@ task :doc do
   system "python lib/yuidoc/yuidoc.py #{parser_in} -p #{parser_out} -o #{generator_out} -t #{template_files} -v #{VERSION}"
 end
 
-task :everything => [:concat, :clean_flash, :minify, :flash_debug, :flash]
+task :rel do
+  rm_rf "rel"
+  mkdir "rel"
+  cp ["js/player.js", "js/player-min.js", "flash/jsplayer.swf"], "rel"
+end
+
+task :everything => [:concat, :clean_flash, :minify, :flash_debug, :flash, :rel]

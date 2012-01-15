@@ -71,5 +71,5 @@ if (!Array.prototype.indexOf) {
 if (!Array.isArray) {
   Array.isArray = function(e) {
     return Object.prototype.toString.call(e).toLowerCase() === '[object array]';
-  }
+  };
 }

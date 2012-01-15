@@ -1,3 +1,4 @@
+/*jslint browser:true, nomen:false, indent:2 */
 var jsPlayer = jsPlayer || {};
 /**
  * Creates a javascript engine object targeting the specified element.
@@ -11,10 +12,11 @@ var jsPlayer = jsPlayer || {};
 jsPlayer.createEngine = function (engineElement, elementType, argp) {
   "use strict";
   var outObject = {},
-      params = argp || {preload: 'auto'},
-      outer = this,
-      getProperty, setProperty,
-      isFlashElement;
+    params = argp || {preload: 'auto'},
+    outer = this,
+    getProperty,
+    setProperty,
+    isFlashElement;
 
   if (!engineElement) {
     throw new Error("Engine element not provided");
@@ -24,7 +26,7 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
     throw new Error("Element type not provided");
   } else {
     if (elementType.toLowerCase() === "flash") {
-      isFlashElement = true
+      isFlashElement = true;
     }
   }
 
@@ -57,7 +59,7 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
     //we should be able to abstract these, but it is safer this way for now
     play: function () {
       //Thanks a bunch IE!
-      if(isFlashElement) {
+      if (isFlashElement) {
         engineElement._play();
       } else {
         engineElement.play();
@@ -65,7 +67,7 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
     },
 
     pause: function () {
-      if(isFlashElement) {
+      if (isFlashElement) {
         engineElement._pause();
       } else {
         engineElement.pause();
@@ -73,7 +75,7 @@ jsPlayer.createEngine = function (engineElement, elementType, argp) {
     },
 
     load: function () {
-      if(isFlashElement) {
+      if (isFlashElement) {
         engineElement._load();
       } else {
         engineElement.load();

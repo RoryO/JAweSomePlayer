@@ -1,13 +1,15 @@
 /*global window: false */
 
 if (!Array.prototype.last) {
-  Array.prototype.last = function () { 
-    return this[this.length - 1]; 
+  Array.prototype.last = function () {
+    "use strict";
+    return this[this.length - 1];
   };
 }
 
 if (!Array.prototype.cycle) {
   Array.prototype.cycle = function () {
+    "use strict";
     var retval;
     retval = this.shift();
     this.push(retval);
@@ -23,12 +25,14 @@ if (!jsPlayer.domExt) {
 
 if (!jsPlayer.domExt.classArray) {
   jsPlayer.domExt.classArray = function (el) {
+    "use strict";
     return el.className.split(" ");
   };
 }
 
 if (!jsPlayer.domExt.hasClass) {
   jsPlayer.domExt.hasClass = function (el, klass) {
+    "use strict";
     if (jsPlayer.domExt.classArray(el).indexOf(klass) === -1) {
       return false;
     } else {
@@ -39,6 +43,7 @@ if (!jsPlayer.domExt.hasClass) {
 
 if (!jsPlayer.domExt.addClass) {
   jsPlayer.domExt.addClass = function (el, klass) {
+    "use strict";
     if (jsPlayer.domExt.hasClass(el, klass)) {
       return;
     }
@@ -48,6 +53,7 @@ if (!jsPlayer.domExt.addClass) {
 
 if (!jsPlayer.domExt.removeClass) {
   jsPlayer.domExt.removeClass = function (el, klass) {
+    "use strict";
     var classList;
     if (!jsPlayer.domExt.hasClass(el, klass)) {
       return;
@@ -63,7 +69,8 @@ if (!jsPlayer.domExt.removeClass) {
 
 if (!jsPlayer.domExt.bindEvent) {
   jsPlayer.domExt.bindEvent = function (el, eventName, fun) {
-    if (typeof(fun) !== 'function') {
+    "use strict";
+    if (typeof (fun) !== 'function') {
       throw new TypeError("Must pass in a function to be bound");
     }
     if (document.addEventListener) {
@@ -72,37 +79,42 @@ if (!jsPlayer.domExt.bindEvent) {
       //hi IE
       el.attachEvent(eventName, fun);
     }
-  }
+  };
 }
 if (!Object.merge) {
-  Object.merge = function () {
+  Object.merge = function (obj) {
     "use strict";
-    var retval = arguments[0];
-    for (var i = 1; i <= arguments.length; i++) {
+    var retval = obj,
+      ele,
+      i;
+    for (i = 1; i <= arguments.length; i++) {
       if (arguments[i] !== undefined) {
-        for(var ele in arguments[i]) {
-          if(!retval[ele]) {
-            retval[ele] = arguments[i][ele];
+        for (ele in arguments[i]) {
+          if (arguments[i].hasOwnProperty(ele)) {
+            if (!retval[ele]) {
+              retval[ele] = arguments[i][ele];
+            }
           }
         }
       }
     }
     return retval;
-  }
+  };
 }
 
 if (!Object.toQueryString) {
   Object.toQueryString = function (o) {
-    var retval = "";
     "use strict";
-    for (var name in o) {
+    var retval = "",
+      name;
+    for (name in o) {
       if (o.hasOwnProperty(name)) {
         if (retval !== "") {
           retval += "&";
         }
-        retval += encodeURI(name) + "=" + encodeURI(new String(o[name]));
+        retval += encodeURI(name) + "=" + encodeURI(o[name].toString());
       }
     }
     return retval;
-  }
+  };
 }

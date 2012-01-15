@@ -1,4 +1,4 @@
-/*global fdSlider: false, swfObject: false */
+/*global fdSlider: false, swfobject: false */
 var jsPlayer = jsPlayer || {};
 /**
  * @module JAwesomePlayer
@@ -15,7 +15,8 @@ jsPlayer.detection = {};
  * @return {Boolean}
  */
 
-jsPlayer.detection.audio = function(mimeType) {
+jsPlayer.detection.audio = function (mimeType) {
+  "use strict";
   var el = document.createElement("audio");
   if (!el.canPlayType) {
     return false;
@@ -26,21 +27,23 @@ jsPlayer.detection.audio = function(mimeType) {
     return false;
   }
 };
+
 /**
  * @class constructors
  */
 jsPlayer.constructors = {
+
   /**
   * 
   * @method startStop
   * @param {String} rootElementId
   * @param {jsPlayer.engine} engine
   */
-  startStop: function(rootElementId, engine) {
-    var startStopElement;
-    "use strict";
 
-    startStopElement = document.createElement("div");
+  startStop: function (rootElementId, engine) {
+    "use strict";
+    var startStopElement = document.createElement("div");
+
     jsPlayer.domExt.addClass(startStopElement, "startStop");
     jsPlayer.domExt.addClass(startStopElement, "startStopLoading");
     document.getElementById(rootElementId).appendChild(startStopElement);
@@ -57,8 +60,8 @@ jsPlayer.constructors = {
       jsPlayer.domExt.addClass(startStopElement, "playerStopped");
     });
     jsPlayer.domExt.bindEvent(startStopElement, 'click', function () {
-      if (engine.isPlaying()) { 
-        engine.pause(); 
+      if (engine.isPlaying()) {
+        engine.pause();
       } else {
         engine.play();
       }
@@ -76,18 +79,19 @@ jsPlayer.constructors = {
 jsPlayer.create = function (sourceURL, params) {
   "use strict";
   var controls = {},
-      playbackReady, mimeType,
-      engine, elementId,
-      buildHTMLAudio, buildFlash,
-      outObject = {},
-      defaultParams = { elementId: "jsPlayer",
-                        autostart: false,
-                        flashLocation: "jsplayer.swf",
-                        preload: 'auto',
-                        controls: { 
-                          startStop: jsPlayer.constructors.startStop
-                        }
-                      };
+    playbackReady,
+    mimeType,
+    engine,
+    elementId,
+    buildHTMLAudio,
+    buildFlash,
+    outObject = {},
+    defaultParams = { elementId: "jsPlayer",
+                      autostart: false,
+                      flashLocation: "jsplayer.swf",
+                      preload: 'auto',
+                      controls: { startStop: jsPlayer.constructors.startStop }
+                    };
 
   if (!sourceURL) {
     throw new Error("URL of media not provided");
@@ -100,18 +104,18 @@ jsPlayer.create = function (sourceURL, params) {
     mimeType = params.mimeType;
   } else {
     mimeType = (function () {
-    var audioTypes, retval, match;
-    audioTypes = { mp3: "audio/mpeg", mpeg: "audio/mpeg", mpeg3: "audio/mpeg",
-                   ogg: "audio/ogg" };
+      var audioTypes, retval, match;
+      audioTypes = { mp3: "audio/mpeg", mpeg: "audio/mpeg", mpeg3: "audio/mpeg",
+                     ogg: "audio/ogg" };
 
-    match = sourceURL.split(".").last();
-    if (match && audioTypes[match]) {
-      retval = audioTypes[match];
-    } else if (params.format && audioTypes[params.format]) {
-      retval = audioTypes[params.format];
-    } else {
-      throw new Error("Can not find media type.  Provide a format member in the parameters object");
-    }
+      match = sourceURL.split(".").last();
+      if (match && audioTypes[match]) {
+        retval = audioTypes[match];
+      } else if (params.format && audioTypes[params.format]) {
+        retval = audioTypes[params.format];
+      } else {
+        throw new Error("Can not find media type.  Provide a format member in the parameters object");
+      }
       return retval;
     }());
   }
@@ -122,9 +126,9 @@ jsPlayer.create = function (sourceURL, params) {
  */
   buildHTMLAudio = function (preloadstatus) {
     var p,
-        node = document.getElementById(elementId),
-        el = document.createElement("audio"),
-        defaults = {preload: 'auto'};
+      node = document.getElementById(elementId),
+      el = document.createElement("audio"),
+      defaults = {preload: 'auto'};
     el.setAttribute("src", sourceURL);
     el.setAttribute('preload', preloadstatus);
     node.appendChild(el);
@@ -139,17 +143,21 @@ jsPlayer.create = function (sourceURL, params) {
 
   buildFlash = function (preloadstatus) {
     var attrs = {
-          width: 1,
-          height: 1,
-          data: params.flashLocation
-        },
-        flashVarsObject = {
-          checkready: 'jsPlayer.eventBroker.tellFlashTrue',
-          onready: 'jsPlayer.eventBroker.flashIsReportingReady',
-          allowscriptaccess: 'always',
-          url: sourceURL
-        },
-        flashParams, flashElement, flashTargetDiv, flashElementId;
+        width: 1,
+        height: 1,
+        data: params.flashLocation
+      },
+      flashVarsObject = {
+        checkready: 'jsPlayer.eventBroker.tellFlashTrue',
+        onready: 'jsPlayer.eventBroker.flashIsReportingReady',
+        allowscriptaccess: 'always',
+        url: sourceURL
+      },
+      flashParams,
+      flashElement,
+      flashTargetDiv,
+      flashElementId;
+
     if (swfobject.hasFlashPlayerVersion("9.0.0")) {
       flashTargetDiv = document.createElement('div');
       flashElementId = elementId + "_" + new Date().getTime();
@@ -168,7 +176,7 @@ jsPlayer.create = function (sourceURL, params) {
   };
 
   // detect audio engine
-  if(params.useNative) {
+  if (params.useNative) {
     engine = jsPlayer.createEngine(buildHTMLAudio(params.preload), "Native");
   } else if (params.useFlash) {
     engine = jsPlayer.createEngine(buildFlash(params.preload), "Flash");
@@ -181,7 +189,7 @@ jsPlayer.create = function (sourceURL, params) {
   }
 
   // construct player controls
-  if (params.controls.startStop && typeof(params.controls.startStop) === "function") {
+  if (params.controls.startStop && typeof (params.controls.startStop) === "function") {
     params.controls.startStop.apply(this, [elementId, engine]);
   }
 
